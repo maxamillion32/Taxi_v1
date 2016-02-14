@@ -2,6 +2,7 @@ package it.mahd.taxi;
 
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
@@ -22,6 +23,7 @@ import it.mahd.taxi.activity.Home;
 import it.mahd.taxi.activity.Login;
 import it.mahd.taxi.activity.Profile;
 import it.mahd.taxi.activity.Reclamation;
+import it.mahd.taxi.activity.Settings;
 import it.mahd.taxi.model.FragmentDrawer;
 import it.mahd.taxi.util.ServerRequest;
 
@@ -140,8 +142,8 @@ public class Main extends AppCompatActivity implements FragmentDrawer.FragmentDr
                 title = getString(R.string.profile);
                 break;
             case 5:
-                fragment = new Profile();
-                title = getString(R.string.profile);
+                fragment = new Settings();
+                title = getString(R.string.settings);
                 break;
             default:
                 break;
@@ -149,7 +151,7 @@ public class Main extends AppCompatActivity implements FragmentDrawer.FragmentDr
 
         if (fragment != null) {
             if(pref.getString(Tag_token, "").equals("")){
-                if(title.equals(getString(R.string.home))) {
+                if(title.equals(getString(R.string.home)) ||title.equals(getString(R.string.settings))) {
                     FragmentManager fragmentManager = getSupportFragmentManager();
                     FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
                     fragmentTransaction.replace(R.id.container_body, fragment);
