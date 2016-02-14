@@ -102,12 +102,9 @@ public class Login extends Fragment {
 
     private void submitForm() {
 
-        if (!validateEmail()) {
-            return;
-        }
-        if (!validatePassword()) {
-            return;
-        }
+        if (!validateEmail()) { return; }
+        if (!validatePassword()) { return; }
+
         Encrypt algo = new Encrypt();
         int x = algo.keyVirtual();
         String key = algo.key(x);
