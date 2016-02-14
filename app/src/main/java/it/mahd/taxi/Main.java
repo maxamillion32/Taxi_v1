@@ -79,6 +79,7 @@ public class Main extends AppCompatActivity implements FragmentDrawer.FragmentDr
             return true;
         }*/
         if (id == R.id.action_settings) {
+            displayView(5);
             return true;
         }
         /*if(id == R.id.action_logout){
@@ -135,6 +136,10 @@ public class Main extends AppCompatActivity implements FragmentDrawer.FragmentDr
                 title = getString(R.string.reclamation);
                 break;
             case 4:
+                fragment = new Profile();
+                title = getString(R.string.profile);
+                break;
+            case 5:
                 fragment = new Profile();
                 title = getString(R.string.profile);
                 break;
