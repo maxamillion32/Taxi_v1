@@ -41,7 +41,12 @@ public class Home extends Fragment {
         Now_btn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (pref.getString(Tag_token, "").equals("")){
+                //return commantre annd delete this
+                FragmentTransaction ft = getFragmentManager().beginTransaction();
+                ft.replace(R.id.container_body, new BookNow());
+                ft.commit();
+                ((Main) getActivity()).getSupportActionBar().setTitle(getString(R.string.now));
+                /*if (pref.getString(Tag_token, "").equals("")){
                     FragmentTransaction ft = getFragmentManager().beginTransaction();
                     ft.replace(R.id.container_body, new Login());
                     ft.commit();
@@ -51,7 +56,7 @@ public class Home extends Fragment {
                     ft.replace(R.id.container_body, new BookNow());
                     ft.commit();
                     ((Main) getActivity()).getSupportActionBar().setTitle(getString(R.string.now));
-                }
+                }*/
             }
         });
 
