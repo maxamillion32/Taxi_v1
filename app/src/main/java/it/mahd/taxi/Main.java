@@ -61,7 +61,7 @@ public class Main extends AppCompatActivity implements FragmentDrawer.FragmentDr
             RelativeLayout rl = (RelativeLayout) findViewById(R.id.nav_header_container);
             LayoutInflater inflater = (LayoutInflater) getSystemService(Context.LAYOUT_INFLATER_SERVICE);
             View vi = inflater.inflate(R.layout.toolnav_drawer, null);
-            TextView tv = (TextView)vi.findViewById(R.id.username_txt);
+            TextView tv = (TextView)vi.findViewById(R.id.usernameTool_txt);
             tv.setText(pref.getString(Tag_fname, "") + " " + pref.getString(Tag_lname, ""));
             rl.addView(vi);
         }
@@ -100,7 +100,7 @@ public class Main extends AppCompatActivity implements FragmentDrawer.FragmentDr
                         RelativeLayout rl = (RelativeLayout) findViewById(R.id.nav_header_container);
                         LayoutInflater inflater = (LayoutInflater) getSystemService(Context.LAYOUT_INFLATER_SERVICE);
                         View vi = inflater.inflate(R.layout.toolnav_drawer, null);
-                        TextView tv = (TextView)vi.findViewById(R.id.username_txt);
+                        TextView tv = (TextView)vi.findViewById(R.id.usernameTool_txt);
                         tv.setText("");
                         rl.addView(vi);
                     }
