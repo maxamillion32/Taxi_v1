@@ -2,9 +2,14 @@ package it.mahd.taxi.activity;
 
 import android.app.DatePickerDialog;
 import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.graphics.drawable.BitmapDrawable;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.design.widget.TextInputLayout;
 import android.support.v4.app.Fragment;
@@ -12,6 +17,7 @@ import android.support.v4.app.FragmentTransaction;
 import android.text.Editable;
 import android.text.TextUtils;
 import android.text.TextWatcher;
+import android.util.Base64;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -21,6 +27,7 @@ import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -31,6 +38,7 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.ByteArrayOutputStream;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
@@ -58,6 +66,7 @@ public class SignUp extends Fragment {
     private static final String Tag_email = "email";
     private static final String Tag_password = "password";
     private static final String Tag_phone = "phone";
+    private static final String Tag_picture = "picture";
     private static final String Tag_key = "key";
     private int year, month, day;
 
@@ -72,6 +81,9 @@ public class SignUp extends Fragment {
     private ArrayList<String> CountrysList, CitysList;
     private ArrayAdapter<String> cityAdapter, countryAdapter;
     JSONArray countrys = null, citys = null;
+    private static final int SELECT_PICTURE = 1;
+    private String imagePath;
+    private ImageView Picture_iv;
 
     public SignUp() {}
 
@@ -88,6 +100,16 @@ public class SignUp extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+    }
+
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if (resultCode == getActivity().RESULT_OK) {
+            if (requestCode == SELECT_PICTURE) {
+                Uri selectedImageUri = data.getData();
+                imagePath = selectedImageUri.getPath();
+                Picture_iv.setImageURI(selectedImageUri);
+            }
+        }
     }
 
     @Override
@@ -110,6 +132,7 @@ public class SignUp extends Fragment {
         Phone_etxt = (EditText) rootView.findViewById(R.id.phone_etxt);
         Login_btn = (Button) rootView.findViewById(R.id.login_btn);
         SignUp_btn = (Button) rootView.findViewById(R.id.sign_up_btn);
+        Picture_iv = (ImageView) rootView.findViewById(R.id.picture_iv);
 
         Fname_etxt.addTextChangedListener(new MyTextWatcher(Fname_etxt));
         Lname_etxt.addTextChangedListener(new MyTextWatcher(Lname_etxt));
@@ -165,10 +188,12 @@ public class SignUp extends Fragment {
 
         Gender_sp.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
-            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {}
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+            }
 
             @Override
-            public void onNothingSelected(AdapterView<?> parent) {}
+            public void onNothingSelected(AdapterView<?> parent) {
+            }
         });
 
         Country_sp.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
@@ -215,7 +240,25 @@ public class SignUp extends Fragment {
                 LoginForm();
             }
         });
+        Picture_iv.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View arg0) {
+                Intent i = new Intent(Intent.ACTION_PICK, android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+                startActivityForResult(i, SELECT_PICTURE);
+            }
+        });
         return rootView;
+    }
+
+    private String getStringPicture() {
+        BitmapDrawable drawable = (BitmapDrawable) Picture_iv.getDrawable();
+        Bitmap bitmap = drawable.getBitmap();
+        ByteArrayOutputStream stream=new ByteArrayOutputStream();
+        bitmap.compress(Bitmap.CompressFormat.PNG, 90, stream);
+        byte[] image=stream.toByteArray();
+        return Base64.encodeToString(image, 0);
+        /*byte[] imageAsBytes = Base64.decode(img_str.getBytes(), Base64.DEFAULT);
+        imageX.setImageBitmap(BitmapFactory.decodeByteArray(imageAsBytes, 0, imageAsBytes.length));*/
     }
 
     private void LoginForm() {
@@ -244,6 +287,7 @@ public class SignUp extends Fragment {
         params.add(new BasicNameValuePair(Tag_email, algo.dec2enc(Email_etxt.getText().toString(), key)));
         params.add(new BasicNameValuePair(Tag_password, algo.dec2enc(Password_etxt.getText().toString(), key)));
         params.add(new BasicNameValuePair(Tag_phone, algo.dec2enc(Phone_etxt.getText().toString(), key)));
+        params.add(new BasicNameValuePair(Tag_picture, getStringPicture()));
         params.add(new BasicNameValuePair(Tag_key, x + ""));
         JSONObject json = sr.getJSON(pref.getString(Tag_url, "") + Tag_signup, params);
         if(json != null){

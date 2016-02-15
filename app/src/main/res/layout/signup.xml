@@ -18,6 +18,15 @@
             android:paddingTop="20dp"
             android:paddingBottom="20dp">
 
+            <it.mahd.taxi.model.CircularImageView
+                android:id="@+id/picture_iv"
+                android:layout_width="96dp"
+                android:layout_height="96dp"
+                app:civ_border_width="2dp"
+                app:civ_border_color="@color/blue"
+                android:layout_gravity="center"
+                android:src="@mipmap/ic_launcher"/>
+
             <android.support.design.widget.TextInputLayout
                 android:id="@+id/input_fname"
                 android:layout_width="match_parent"
