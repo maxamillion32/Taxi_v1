@@ -69,21 +69,21 @@ public class SignUp extends Fragment {
     private static final String Tag_picture = "picture";
     private static final String Tag_key = "key";
     private int year, month, day;
+    private static final int SELECT_PICTURE = 1;
+    private String imagePath;
 
     private EditText Fname_etxt, Lname_etxt, Email_etxt, Password_etxt, Phone_etxt;
     private TextView DateN_txt;
     private TextInputLayout Fname_input, Lname_input, Email_input, Password_input;
     private Spinner Gender_sp, Country_sp, City_sp;
     private Button Login_btn, SignUp_btn;
+    private ImageView Picture_iv;
 
     ServerRequest sr = new ServerRequest();
     SharedPreferences pref;
     private ArrayList<String> CountrysList, CitysList;
     private ArrayAdapter<String> cityAdapter, countryAdapter;
     JSONArray countrys = null, citys = null;
-    private static final int SELECT_PICTURE = 1;
-    private String imagePath;
-    private ImageView Picture_iv;
 
     public SignUp() {}
 
@@ -178,7 +178,7 @@ public class SignUp extends Fragment {
         month = calendar.get(Calendar.MONTH);
         day = calendar.get(Calendar.DAY_OF_MONTH);
 
-        DateN_txt.setText(new StringBuilder().append(1990).append("-").append(month+1).append("-").append(day));
+        DateN_txt.setText(new StringBuilder().append(1990).append("-").append(month + 1).append("-").append(day));
         DateN_txt.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -203,25 +203,26 @@ public class SignUp extends Fragment {
                 List<NameValuePair> cityParams = new ArrayList<NameValuePair>();
                 cityParams.add(new BasicNameValuePair(Tag_name, Country_sp.getSelectedItem().toString()));
                 JSONObject jsonx = sr.getJSON(pref.getString(Tag_url, "") + Tag_getCity, cityParams);
-                if(jsonx != null){
-                    try{
-                        if(jsonx.getBoolean("res")){
+                if (jsonx != null) {
+                    try {
+                        if (jsonx.getBoolean("res")) {
                             citys = jsonx.getJSONArray("data");
-                            for (int i=0; i<citys.length(); i++) {
+                            for (int i = 0; i < citys.length(); i++) {
                                 JSONObject x = citys.getJSONObject(i);
                                 CitysList.add(x.getString(Tag_name));
                             }
                         }
-                    }catch (JSONException e) {
+                    } catch (JSONException e) {
                         e.printStackTrace();
                     }
                 }
                 cityAdapter = new ArrayAdapter<String>(getActivity(),
-                        android.R.layout.simple_spinner_item,CitysList);
+                        android.R.layout.simple_spinner_item, CitysList);
                 cityAdapter.
                         setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
                 City_sp.setAdapter(cityAdapter);
             }
+
             @Override
             public void onNothingSelected(AdapterView<?> parent) {
 
@@ -257,8 +258,6 @@ public class SignUp extends Fragment {
         bitmap.compress(Bitmap.CompressFormat.PNG, 90, stream);
         byte[] image=stream.toByteArray();
         return Base64.encodeToString(image, 0);
-        /*byte[] imageAsBytes = Base64.decode(img_str.getBytes(), Base64.DEFAULT);
-        imageX.setImageBitmap(BitmapFactory.decodeByteArray(imageAsBytes, 0, imageAsBytes.length));*/
     }
 
     private void LoginForm() {
