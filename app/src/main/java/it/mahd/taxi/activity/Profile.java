@@ -22,6 +22,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import it.mahd.taxi.R;
+import it.mahd.taxi.util.Calculator;
 import it.mahd.taxi.util.Encrypt;
 import it.mahd.taxi.util.ServerRequest;
 
@@ -68,22 +69,18 @@ public class Profile extends Fragment {
         JSONObject json = sr.getJSON(pref.getString(Tag_url, "") + Tag_profile, params);
         if(json != null){
             try{
-                if(json.getBoolean("res")){
-                    loads = json.getJSONArray("data");
-                    if(loads.length() != 0){
-                        JSONObject c = loads.getJSONObject(0);
-                        int keyVirtual = Integer.parseInt(json.getString(Tag_key));
-                        String newKey = algo.key(keyVirtual);
-                        fname = algo.enc2dec(c.getString(Tag_fname), newKey);
-                        lname = algo.enc2dec(c.getString(Tag_lname), newKey);
-                        gender = algo.enc2dec(c.getString(Tag_gender), newKey);
-                        dateN = algo.enc2dec(c.getString(Tag_dateN), newKey);
-                        country = algo.enc2dec(c.getString(Tag_country), newKey);
-                        city = algo.enc2dec(c.getString(Tag_city), newKey);
-                        email = algo.enc2dec(c.getString(Tag_email), newKey);
-                        phone = algo.enc2dec(c.getString(Tag_phone), newKey);
-                        picture = c.getString(Tag_picture);
-                    }
+                if(json.getBoolean("res")) {
+                    int keyVirtual = Integer.parseInt(json.getString(Tag_key));
+                    String newKey = algo.key(keyVirtual);
+                    fname = algo.enc2dec(json.getString(Tag_fname), newKey);
+                    lname = algo.enc2dec(json.getString(Tag_lname), newKey);
+                    gender = algo.enc2dec(json.getString(Tag_gender), newKey);
+                    dateN = algo.enc2dec(json.getString(Tag_dateN), newKey);
+                    country = algo.enc2dec(json.getString(Tag_country), newKey);
+                    city = algo.enc2dec(json.getString(Tag_city), newKey);
+                    email = algo.enc2dec(json.getString(Tag_email), newKey);
+                    phone = algo.enc2dec(json.getString(Tag_phone), newKey);
+                    picture = json.getString(Tag_picture);
                 }
             }catch (JSONException e) {
                 e.printStackTrace();
@@ -97,29 +94,30 @@ public class Profile extends Fragment {
             }
         });
 
+        int[] tab = new Calculator().getAge(dateN);
+        Age_txt = (TextView) rootView.findViewById(R.id.age_txt);
+        Age_txt.setText(tab[0] + "years, " + tab[1] + "month, " + tab[2] + "day");
+                Age_txt.setOnClickListener(new View.OnClickListener() {
+                    public void onClick(View v) {
+            }
+        });
+
         City_txt = (TextView) rootView.findViewById(R.id.city_txt);
-        City_txt.setText(fname + " " + lname);
+        City_txt.setText(gender + " from " + country + ", lives in " + city);
         City_txt.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
             }
         });
 
-        Age_txt = (TextView) rootView.findViewById(R.id.age_txt);
-        Age_txt.setText(fname + " " + lname);
-        Age_txt.setOnClickListener(new View.OnClickListener() {
-            public void onClick(View v) {
-            }
-        });
-
         Email_txt = (TextView) rootView.findViewById(R.id.email_txt);
-        Email_txt.setText(" " + email);
+        Email_txt.setText(email);
         Email_txt.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
             }
         });
 
         Phone_txt = (TextView) rootView.findViewById(R.id.phone_txt);
-        Phone_txt.setText(" " + phone);
+        Phone_txt.setText(phone);
         Phone_txt.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
             }

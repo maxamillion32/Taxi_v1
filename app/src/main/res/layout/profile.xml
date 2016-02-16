@@ -15,32 +15,46 @@
         android:orientation="vertical"
         android:gravity="center" >
 
-        <it.mahd.taxi.model.CircularImageView
-            android:id="@+id/picture_iv"
-            android:layout_width="96dp"
-            android:layout_height="96dp"
-            app:civ_border_width="2dp"
-            app:civ_border_color="@color/blue"/>
-
-        <TextView
-            android:id="@+id/username_txt"
-            android:layout_width="wrap_content"
+        <LinearLayout
+            android:layout_width="fill_parent"
             android:layout_height="wrap_content"
-            android:paddingBottom="5dp"
-            android:textColor="@color/teal"
-            android:textStyle="bold|italic"
-            android:textSize="22sp"/>
+            android:orientation="horizontal">
+
+            <it.mahd.taxi.model.CircularImageView
+                android:id="@+id/picture_iv"
+                android:layout_width="96dp"
+                android:layout_height="96dp"
+                app:civ_border_width="2dp"
+                app:civ_border_color="@color/blue"/>
+
+            <LinearLayout
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+
+                <TextView
+                    android:id="@+id/username_txt"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:paddingTop="20dp"
+                    android:paddingLeft="5dp"
+                    android:paddingBottom="5dp"
+                    android:textColor="@color/teal"
+                    android:textStyle="bold|italic"
+                    android:textSize="26sp"/>
+
+                <TextView
+                    android:id="@+id/age_txt"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:paddingLeft="5dp"
+                    android:textColor="@color/teal"
+                    android:textSize="18sp"/>
+            </LinearLayout>
+        </LinearLayout>
 
         <TextView
             android:id="@+id/city_txt"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:paddingBottom="5dp"
-            android:textColor="@color/teal"
-            android:textSize="18sp" />
-
-        <TextView
-            android:id="@+id/age_txt"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:padding="5dp"

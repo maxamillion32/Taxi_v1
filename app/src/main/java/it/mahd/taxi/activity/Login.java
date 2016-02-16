@@ -118,7 +118,7 @@ public class Login extends Fragment {
         if(json != null){
             try{
                 String jsonstr = json.getString("response");
-                if(json.getBoolean("res")){
+                if(json.getBoolean("res")) {
                     String token = json.getString(Tag_token);
                     int keyVirtual = Integer.parseInt(json.getString(Tag_key));
                     String newKey = algo.key(keyVirtual);
