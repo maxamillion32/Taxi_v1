@@ -91,32 +91,6 @@ public class Main extends AppCompatActivity implements FragmentDrawer.FragmentDr
             displayView(5);
             return true;
         }
-        /*if(id == R.id.action_logout){
-            List<NameValuePair> params = new ArrayList<NameValuePair>();
-            params.add(new BasicNameValuePair(Tag_token, pref.getString(Tag_token, "")));
-            JSONObject json = sr.getJSON(url + Tag_logout,params);
-            if(json != null){
-                try{
-                    if(json.getBoolean("res")){
-                        SharedPreferences.Editor edit = pref.edit();
-                        edit.putString(Tag_token, "");
-                        edit.putString(Tag_fname, "");
-                        edit.putString(Tag_lname, "");
-                        edit.commit();
-
-                        RelativeLayout rl = (RelativeLayout) findViewById(R.id.nav_header_container);
-                        LayoutInflater inflater = (LayoutInflater) getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-                        View vi = inflater.inflate(R.layout.toolnav_drawer, null);
-                        TextView tv = (TextView)vi.findViewById(R.id.usernameTool_txt);
-                        tv.setText("");
-                        rl.addView(vi);
-                    }
-                }catch(JSONException e){
-                    e.printStackTrace();
-                }
-            }
-            return true;
-        }*/
         return super.onOptionsItemSelected(item);
     }
     @Override

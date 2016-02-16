@@ -5,11 +5,14 @@ import android.content.SharedPreferences;
 import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentTransaction;
 import android.util.Base64;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import org.apache.http.NameValuePair;
@@ -21,6 +24,7 @@ import org.json.JSONObject;
 import java.util.ArrayList;
 import java.util.List;
 
+import it.mahd.taxi.Main;
 import it.mahd.taxi.R;
 import it.mahd.taxi.util.Calculator;
 import it.mahd.taxi.util.Encrypt;
@@ -32,6 +36,7 @@ import it.mahd.taxi.util.ServerRequest;
 public class Profile extends Fragment {
     private static final String Tag_url = "url";
     private static final String Tag_profile = "/profile";
+    private static final String Tag_logout = "/logout";
     private static final String Tag_token = "token";
     private static final String Tag_fname = "fname";
     private static final String Tag_lname = "lname";
@@ -46,9 +51,9 @@ public class Profile extends Fragment {
     private String fname, lname, gender, dateN, country, city, email, phone, picture;
     TextView Username_txt, City_txt, Age_txt, Email_txt, Phone_txt;
     ImageView Picture_iv;
+    private Button Logout_btn;
     ServerRequest sr = new ServerRequest();
     SharedPreferences pref;
-    JSONArray loads = null;
 
     public Profile() {}
 
@@ -65,7 +70,6 @@ public class Profile extends Fragment {
         Encrypt algo = new Encrypt();
         List<NameValuePair> params = new ArrayList<NameValuePair>();
         params.add(new BasicNameValuePair(Tag_token, pref.getString(Tag_token, "")));
-        ServerRequest sr = new ServerRequest();
         JSONObject json = sr.getJSON(pref.getString(Tag_url, "") + Tag_profile, params);
         if(json != null){
             try{
@@ -126,6 +130,42 @@ public class Profile extends Fragment {
         Picture_iv = (ImageView) rootView.findViewById(R.id.picture_iv);
         byte[] imageAsBytes = Base64.decode(picture.getBytes(), Base64.DEFAULT);
         Picture_iv.setImageBitmap(BitmapFactory.decodeByteArray(imageAsBytes, 0, imageAsBytes.length));
+
+        Logout_btn = (Button) rootView.findViewById(R.id.logout_btn);
+        Logout_btn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                List<NameValuePair> params = new ArrayList<NameValuePair>();
+                params.add(new BasicNameValuePair(Tag_token, pref.getString(Tag_token, "")));
+                JSONObject json = sr.getJSON(pref.getString(Tag_url, "") + Tag_logout, params);
+                if(json != null){
+                    try{
+                        if(json.getBoolean("res")){
+                            SharedPreferences.Editor edit = pref.edit();
+                            edit.putString(Tag_token, "");
+                            edit.putString(Tag_fname, "");
+                            edit.putString(Tag_lname, "");
+                            edit.putString(Tag_picture, "");
+                            edit.commit();
+
+                            RelativeLayout rl = (RelativeLayout) getActivity().findViewById(R.id.nav_header_container);
+                            LayoutInflater inflater = (LayoutInflater) getActivity().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+                            View vi = inflater.inflate(R.layout.toolnav_drawer, null);
+                            TextView tv = (TextView) vi.findViewById(R.id.usernameTool_txt);
+                            tv.setText("");
+                            rl.addView(vi);
+
+                            FragmentTransaction ft = getFragmentManager().beginTransaction();
+                            ft.replace(R.id.container_body, new Home());
+                            ft.commit();
+                            ((Main) getActivity()).getSupportActionBar().setTitle(getString(R.string.home));
+                        }
+                    }catch(JSONException e){
+                        e.printStackTrace();
+                    }
+                }
+            }
+        });
         return rootView;
     }
 }
