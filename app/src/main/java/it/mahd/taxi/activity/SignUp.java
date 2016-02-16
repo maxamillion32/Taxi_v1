@@ -1,6 +1,7 @@
 package it.mahd.taxi.activity;
 
 import android.app.DatePickerDialog;
+import android.content.ActivityNotFoundException;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -229,6 +230,13 @@ public class SignUp extends Fragment {
             }
         });
 
+        Picture_iv.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View arg0) {
+                Intent i = new Intent(Intent.ACTION_PICK, android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+                startActivityForResult(i, SELECT_PICTURE);
+            }
+        });
         SignUp_btn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -241,23 +249,16 @@ public class SignUp extends Fragment {
                 LoginForm();
             }
         });
-        Picture_iv.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View arg0) {
-                Intent i = new Intent(Intent.ACTION_PICK, android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
-                startActivityForResult(i, SELECT_PICTURE);
-            }
-        });
         return rootView;
     }
 
     private String getStringPicture() {
-        BitmapDrawable drawable = (BitmapDrawable) Picture_iv.getDrawable();
-        Bitmap bitmap = drawable.getBitmap();
-        ByteArrayOutputStream stream=new ByteArrayOutputStream();
-        bitmap.compress(Bitmap.CompressFormat.PNG, 90, stream);
-        byte[] image=stream.toByteArray();
-        return Base64.encodeToString(image, 0);
+        Picture_iv.buildDrawingCache();
+        Bitmap bitmap = Picture_iv.getDrawingCache();
+        ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
+        bitmap.compress(Bitmap.CompressFormat.JPEG, 100, byteArrayOutputStream);
+        byte[] byteArray = byteArrayOutputStream .toByteArray();
+        return Base64.encodeToString(byteArray, Base64.DEFAULT);
     }
 
     private void LoginForm() {

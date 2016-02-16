@@ -2,6 +2,7 @@ package it.mahd.taxi.activity;
 
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
@@ -12,12 +13,14 @@ import android.support.v7.app.ActionBar;
 import android.text.Editable;
 import android.text.TextUtils;
 import android.text.TextWatcher;
+import android.util.Base64;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -44,6 +47,7 @@ public class Login extends Fragment {
     private static final String Tag_token = "token";
     private static final String Tag_fname = "fname";
     private static final String Tag_lname = "lname";
+    private static final String Tag_picture = "picture";
     private static final String Tag_email = "email";
     private static final String Tag_password = "password";
     private static final String Tag_key = "key";
@@ -93,7 +97,6 @@ public class Login extends Fragment {
     }
 
     private void SignUpForm() {
-
         FragmentTransaction ft = getFragmentManager().beginTransaction();
         ft.replace(R.id.container_body, new SignUp());
         ft.commit();
@@ -101,7 +104,6 @@ public class Login extends Fragment {
     }
 
     private void submitForm() {
-
         if (!validateEmail()) { return; }
         if (!validatePassword()) { return; }
 
@@ -122,18 +124,23 @@ public class Login extends Fragment {
                     String newKey = algo.key(keyVirtual);
                     String fname = algo.enc2dec(json.getString(Tag_fname), newKey);
                     String lname = algo.enc2dec(json.getString(Tag_lname), newKey);
+                    String picture = json.getString(Tag_picture);
 
                     SharedPreferences.Editor edit = pref.edit();
                     edit.putString(Tag_token, token);
                     edit.putString(Tag_fname, fname);
                     edit.putString(Tag_lname, lname);
+                    edit.putString(Tag_picture, picture);
                     edit.commit();
 
                     RelativeLayout rl = (RelativeLayout) getActivity().findViewById(R.id.nav_header_container);
                     LayoutInflater inflater = (LayoutInflater) getActivity().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
                     View vi = inflater.inflate(R.layout.toolnav_drawer, null);
-                    TextView tv = (TextView)vi.findViewById(R.id.username_txt);
+                    TextView tv = (TextView) vi.findViewById(R.id.usernameTool_txt);
                     tv.setText(fname + " " + lname);
+                    ImageView im = (ImageView) vi.findViewById(R.id.pictureTool_iv);
+                    byte[] imageAsBytes = Base64.decode(picture.getBytes(), Base64.DEFAULT);
+                    im.setImageBitmap(BitmapFactory.decodeByteArray(imageAsBytes, 0, imageAsBytes.length));
                     rl.addView(vi);
 
                     FragmentTransaction ft = getFragmentManager().beginTransaction();

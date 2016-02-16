@@ -2,6 +2,7 @@ package it.mahd.taxi;
 
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -10,10 +11,12 @@ import android.support.v4.app.FragmentTransaction;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.Base64;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
@@ -35,6 +38,7 @@ public class Main extends AppCompatActivity implements FragmentDrawer.FragmentDr
     private static final String Tag_token = "token";
     private static final String Tag_fname = "fname";
     private static final String Tag_lname = "lname";
+    private static final String Tag_picture = "picture";
     public Toolbar mToolbar;
     private FragmentDrawer drawerFragment;
 
@@ -61,8 +65,11 @@ public class Main extends AppCompatActivity implements FragmentDrawer.FragmentDr
             RelativeLayout rl = (RelativeLayout) findViewById(R.id.nav_header_container);
             LayoutInflater inflater = (LayoutInflater) getSystemService(Context.LAYOUT_INFLATER_SERVICE);
             View vi = inflater.inflate(R.layout.toolnav_drawer, null);
-            TextView tv = (TextView)vi.findViewById(R.id.usernameTool_txt);
+            TextView tv = (TextView) vi.findViewById(R.id.usernameTool_txt);
             tv.setText(pref.getString(Tag_fname, "") + " " + pref.getString(Tag_lname, ""));
+            ImageView im = (ImageView) vi.findViewById(R.id.pictureTool_iv);
+            byte[] imageAsBytes = Base64.decode(pref.getString(Tag_picture, "").getBytes(), Base64.DEFAULT);
+            im.setImageBitmap(BitmapFactory.decodeByteArray(imageAsBytes, 0, imageAsBytes.length));
             rl.addView(vi);
         }
     }
