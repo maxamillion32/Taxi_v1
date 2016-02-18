@@ -5,6 +5,7 @@ import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v4.app.ListFragment;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -24,6 +25,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
+import it.mahd.taxi.Main;
 import it.mahd.taxi.R;
 import it.mahd.taxi.util.ServerRequest;
 
@@ -79,13 +81,14 @@ public class Reclamation extends ListFragment {
                 new String[] { Tag_status, Tag_subject, Tag_date, Tag_id }, new int[] { R.id.picture_iv, R.id.txt_name, R.id.txt_date, R.id._id });
         setListAdapter(adapter);
 
-        FloatingActionButton fab = (FloatingActionButton) rootView.findViewById(R.id.add_btn);
-        fab.setOnClickListener(new View.OnClickListener() {
+        FloatingActionButton AddReclamation_btn = (FloatingActionButton) rootView.findViewById(R.id.add_btn);
+        AddReclamation_btn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                // Click action
-                /*Intent intent = new Intent(MainActivity.this, NewMessageActivity.class);
-                startActivity(intent);*/
+                FragmentTransaction ft = getFragmentManager().beginTransaction();
+                ft.replace(R.id.container_body, new ReclamationAdd());
+                ft.commit();
+                ((Main) getActivity()).getSupportActionBar().setTitle(getString(R.string.reclamation));
             }
         });
         return rootView;
