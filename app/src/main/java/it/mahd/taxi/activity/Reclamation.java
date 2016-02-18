@@ -3,6 +3,7 @@ package it.mahd.taxi.activity;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.ListFragment;
 import android.view.LayoutInflater;
@@ -77,6 +78,16 @@ public class Reclamation extends ListFragment {
         ListAdapter adapter = new SimpleAdapter(getActivity(), ReclamationList, R.layout.rec_list,
                 new String[] { Tag_status, Tag_subject, Tag_date, Tag_id }, new int[] { R.id.picture_iv, R.id.txt_name, R.id.txt_date, R.id._id });
         setListAdapter(adapter);
+
+        FloatingActionButton fab = (FloatingActionButton) rootView.findViewById(R.id.add_btn);
+        fab.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                // Click action
+                /*Intent intent = new Intent(MainActivity.this, NewMessageActivity.class);
+                startActivity(intent);*/
+            }
+        });
         return rootView;
     }
 
