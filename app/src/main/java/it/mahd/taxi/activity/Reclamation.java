@@ -86,7 +86,7 @@ public class Reclamation extends ListFragment {
             @Override
             public void onClick(View view) {
                 FragmentTransaction ft = getFragmentManager().beginTransaction();
-                ft.replace(R.id.container_body, new ReclamationAdd());
+                ft.replace(R.id.container_body, new ReclamationMsg());
                 ft.commit();
                 ((Main) getActivity()).getSupportActionBar().setTitle(getString(R.string.reclamation));
             }

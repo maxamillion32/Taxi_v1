@@ -1,33 +1,27 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout
+<LinearLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="fill_parent"
+    android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical">
 
     <ListView
         android:id="@android:id/list"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:paddingLeft="20dp"
-        android:paddingRight="20dp"
-        android:paddingTop="20dp"
-        android:paddingBottom="20dp"/>
+        android:layout_width="fill_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:background="@null"
+        android:divider="@null"
+        android:stackFromBottom="true"
+        android:transcriptMode="alwaysScroll"/>
 
     <LinearLayout
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:layout_gravity="bottom|end"
-        android:layout_alignParentBottom="true"
+        android:orientation="horizontal"
         android:paddingRight="5dp"
         android:paddingTop="5dp"
         android:paddingBottom="5dp">
-
-    <LinearLayout
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal">
 
         <android.support.design.widget.TextInputLayout
             android:id="@+id/input_subject"
@@ -36,7 +30,7 @@
             android:layout_weight="1">
 
             <EditText
-                android:id="@+id/subject_etxt"
+                android:id="@+id/message_etxt"
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
@@ -45,11 +39,12 @@
                 android:hint="@string/subject" />
         </android.support.design.widget.TextInputLayout>
 
+
         <android.support.design.widget.FloatingActionButton
-            android:id="@+id/add_btn"
+            android:id="@+id/send_btn"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
             android:src="@android:drawable/ic_menu_send" />
+
     </LinearLayout>
-    </LinearLayout>
-</RelativeLayout>
+</LinearLayout>
