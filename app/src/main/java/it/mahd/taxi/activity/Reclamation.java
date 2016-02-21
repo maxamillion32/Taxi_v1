@@ -4,15 +4,12 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
-import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.app.ListFragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AdapterView;
 import android.widget.ListAdapter;
-import android.widget.ListView;
 import android.widget.SimpleAdapter;
 
 import org.apache.http.NameValuePair;
@@ -77,7 +74,7 @@ public class Reclamation extends ListFragment {
                 e.printStackTrace();
             }
         }
-        ListAdapter adapter = new SimpleAdapter(getActivity(), ReclamationList, R.layout.rec_list,
+        ListAdapter adapter = new SimpleAdapter(getActivity(), ReclamationList, R.layout.reclamation_list,
                 new String[] { Tag_status, Tag_subject, Tag_date, Tag_id }, new int[] { R.id.picture_iv, R.id.txt_name, R.id.txt_date, R.id._id });
         setListAdapter(adapter);
 
