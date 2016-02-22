@@ -5,7 +5,6 @@ import java.util.ArrayList;
 import android.app.Activity;
 import android.content.Context;
 import android.graphics.Color;
-import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -25,9 +24,7 @@ public class ChatAdapter extends BaseAdapter {
 
     public ChatAdapter(Activity activity, ArrayList list) {
         chatMessageList = list;
-        inflater = (LayoutInflater) activity
-                .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-
+        inflater = (LayoutInflater) activity.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
     }
 
     @Override
@@ -50,14 +47,12 @@ public class ChatAdapter extends BaseAdapter {
         ChatMessage message = (ChatMessage) chatMessageList.get(position);
         View vi = convertView;
         if (convertView == null)
-            vi = inflater.inflate(R.layout.chatbubble, null);
+            vi = inflater.inflate(R.layout.reclamation_chat, null);
 
-        TextView msg = (TextView) vi.findViewById(R.id.message_text);
+        TextView msg = (TextView) vi.findViewById(R.id.message_txt);
         msg.setText(message.body);
-        LinearLayout layout = (LinearLayout) vi
-                .findViewById(R.id.bubble_layout);
-        LinearLayout parent_layout = (LinearLayout) vi
-                .findViewById(R.id.bubble_layout_parent);
+        LinearLayout layout = (LinearLayout) vi.findViewById(R.id.bubble_layout);
+        LinearLayout parent_layout = (LinearLayout) vi.findViewById(R.id.bubble_layout_parent);
 
         // if message is mine then align to right
         if (message.isMine) {
@@ -69,7 +64,7 @@ public class ChatAdapter extends BaseAdapter {
             //layout.setBackgroundResource(R.drawable.bubble1);
             parent_layout.setGravity(Gravity.LEFT);
         }
-        msg.setTextColor(Color.BLACK);
+        //msg.setTextColor(Color.BLACK);
         return vi;
     }
 

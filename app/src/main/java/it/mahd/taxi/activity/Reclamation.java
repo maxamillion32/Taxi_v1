@@ -9,8 +9,11 @@ import android.support.v4.app.ListFragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.ListAdapter;
+import android.widget.ListView;
 import android.widget.SimpleAdapter;
+import android.widget.TextView;
 
 import org.apache.http.NameValuePair;
 import org.apache.http.message.BasicNameValuePair;
@@ -75,17 +78,33 @@ public class Reclamation extends ListFragment {
             }
         }
         ListAdapter adapter = new SimpleAdapter(getActivity(), ReclamationList, R.layout.reclamation_list,
-                new String[] { Tag_status, Tag_subject, Tag_date, Tag_id }, new int[] { R.id.picture_iv, R.id.txt_name, R.id.txt_date, R.id._id });
+                new String[] { Tag_status, Tag_subject, Tag_date, Tag_id }, new int[] { R.id.picture_iv, R.id.txt_name, R.id.txt_date, R.id.idRec });
         setListAdapter(adapter);
+
+        ListView lv = getListView();
+        lv.setOnItemClickListener(new AdapterView.OnItemClickListener(){
+            @Override
+            public void onItemClick(AdapterView<?> adapter, View v, int position,
+                                    long arg3){
+                String idRec = ((TextView) v.findViewById(R.id.idRec)).getText().toString();
+                Bundle bundle=new Bundle();
+                bundle.putString("id", idRec);
+                new ReclamationMsg().setArguments(bundle);
+                FragmentTransaction ft = getFragmentManager().beginTransaction();
+                ft.replace(R.id.container_body, new ReclamationMsg());
+                ft.commit();
+                ((Main) getActivity()).getSupportActionBar().setTitle(getString(R.string.reclamation));
+            }
+        });
 
         FloatingActionButton AddReclamation_btn = (FloatingActionButton) rootView.findViewById(R.id.add_btn);
         AddReclamation_btn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 FragmentTransaction ft = getFragmentManager().beginTransaction();
-                ft.replace(R.id.container_body, new ReclamationMsg());
+                ft.replace(R.id.container_body, new ReclamationAdd());
                 ft.commit();
-                ((Main) getActivity()).getSupportActionBar().setTitle(getString(R.string.reclamation));
+                ((Main) getActivity()).getSupportActionBar().setTitle(getString(R.string.reclamation_new));
             }
         });
         return rootView;

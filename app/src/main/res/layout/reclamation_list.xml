@@ -58,7 +58,7 @@
         android:textSize="12sp" />
 
     <TextView
-        android:id="@+id/_id"
+        android:id="@+id/idRec"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:visibility="gone" />

@@ -5,6 +5,7 @@
     <string name="now">Book now</string>
     <string name="advance">Book in advance</string>
     <string name="reclamation">Reclamation</string>
+    <string name="reclamation_new">New Reclamation</string>
     <string name="profile">Profile</string>
     <string name="login">Login</string>
     <string name="login_link">Already registered! Login Me.</string>
@@ -27,7 +28,9 @@
     <string name="logout">Logout</string>
     <string name="welcome">Welcome</string>
     <string name="subject">Subject</string>
+    <string name="subject_err">Enter the Subject</string>
     <string name="message">Message</string>
+    <string name="message_err">Enter the Message</string>
     <string name="send">Send</string>
 
     <string-array name="nav_drawer_labels">

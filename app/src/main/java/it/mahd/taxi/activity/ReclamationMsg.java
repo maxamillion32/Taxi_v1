@@ -5,22 +5,18 @@ import java.util.Random;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
-import android.support.v7.app.ActionBarActivity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.widget.EditText;
-import android.widget.ImageButton;
 import android.widget.ListView;
-
-import java.util.ArrayList;
-import java.util.Random;
+import android.widget.Toast;
 
 import it.mahd.taxi.R;
+import it.mahd.taxi.util.Calculator;
 import it.mahd.taxi.util.ChatAdapter;
 import it.mahd.taxi.util.ChatMessage;
-import it.mahd.taxi.util.CommonMethods;
 
 /**
  * Created by salem on 2/19/16.
@@ -37,8 +33,9 @@ public class ReclamationMsg extends Fragment implements OnClickListener {
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.reclamation_msg, container, false);
 
+        String x = getArguments().getString("id");
+        Toast.makeText(getActivity(), x, Toast.LENGTH_LONG).show();
         random = new Random();
-        //((ActionBarActivity) getActivity()).getSupportActionBar().setTitle("Chats");
         msg_edittext = (EditText) rootView.findViewById(R.id.message_etxt);
         msgListView = (ListView) rootView.findViewById(R.id.msgListView);
         FloatingActionButton sendButton = (FloatingActionButton) rootView.findViewById(R.id.send_btn);
@@ -61,12 +58,11 @@ public class ReclamationMsg extends Fragment implements OnClickListener {
     public void sendTextMessage(View v) {
         String message = msg_edittext.getEditableText().toString();
         if (!message.equalsIgnoreCase("")) {
-            final ChatMessage chatMessage = new ChatMessage(user1, user2,
-                    message, "" + random.nextInt(1000), true);
+            final ChatMessage chatMessage = new ChatMessage(user1, user2, message, "" + random.nextInt(1000), true);
             chatMessage.setMsgID();
             chatMessage.body = message;
-            chatMessage.Date = CommonMethods.getCurrentDate();
-            chatMessage.Time = CommonMethods.getCurrentTime();
+            chatMessage.Date = Calculator.getCurrentDate();
+            chatMessage.Time = Calculator.getCurrentTime();
             msg_edittext.setText("");
             chatAdapter.add(chatMessage);
             chatAdapter.notifyDataSetChanged();

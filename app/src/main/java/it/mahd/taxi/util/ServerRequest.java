@@ -30,7 +30,7 @@ public class ServerRequest {
     static JSONObject jObj = null;
     static String json = "";
 
-    public ServerRequest(){ }
+    public ServerRequest() {}
 
     public JSONObject getJSONFromUrl(String url, List<NameValuePair> params){
 

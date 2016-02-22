@@ -11,8 +11,7 @@ public class ChatMessage {
     public String msgid;
     public boolean isMine;// Did I send the message.
 
-    public ChatMessage(String Sender, String Receiver, String messageString,
-                       String ID, boolean isMINE) {
+    public ChatMessage(String Sender, String Receiver, String messageString,String ID, boolean isMINE) {
         body = messageString;
         isMine = isMINE;
         sender = Sender;
@@ -22,8 +21,6 @@ public class ChatMessage {
     }
 
     public void setMsgID() {
-
         msgid += "-" + String.format("%02d", new Random().nextInt(100));
-        ;
     }
 }
