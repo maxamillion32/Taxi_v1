@@ -32,12 +32,12 @@ import it.mahd.taxi.util.ServerRequest;
  * Created by salem on 2/18/16.
  */
 public class ReclamationAdd extends Fragment {
+    SharedPreferences pref;
+    Controllers conf = new Controllers();
+    ServerRequest sr = new ServerRequest();
     private TextInputLayout Subject_input, Msg_input;
     private EditText Subject_etxt, Msg_etxt;
     private Button Send_btn;
-    ServerRequest sr = new ServerRequest();
-    Controllers conf = new Controllers();
-    SharedPreferences pref;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -66,11 +66,11 @@ public class ReclamationAdd extends Fragment {
         int x = algo.keyVirtual();
         String key = algo.key(x);
         List<NameValuePair> params = new ArrayList<NameValuePair>();
-        params.add(new BasicNameValuePair(conf.Tag_token, pref.getString(conf.Tag_token, "")));
-        params.add(new BasicNameValuePair(conf.Tag_username, algo.dec2enc(pref.getString(conf.Tag_fname, "") + " " + pref.getString(conf.Tag_lname, ""), key)));
-        params.add(new BasicNameValuePair(conf.Tag_subject, algo.dec2enc(Subject_etxt.getText().toString(), key)));
-        params.add(new BasicNameValuePair(conf.Tag_message, algo.dec2enc(Msg_etxt.getText().toString(), key)));
-        params.add(new BasicNameValuePair(conf.Tag_key, x + ""));
+        params.add(new BasicNameValuePair(conf.tag_token, pref.getString(conf.tag_token, "")));
+        params.add(new BasicNameValuePair(conf.tag_username, algo.dec2enc(pref.getString(conf.tag_fname, "") + " " + pref.getString(conf.tag_lname, ""), key)));
+        params.add(new BasicNameValuePair(conf.tag_subject, algo.dec2enc(Subject_etxt.getText().toString(), key)));
+        params.add(new BasicNameValuePair(conf.tag_message, algo.dec2enc(Msg_etxt.getText().toString(), key)));
+        params.add(new BasicNameValuePair(conf.tag_key, x + ""));
         JSONObject json = sr.getJSON(conf.url_addReclamation, params);
         if(json != null){
             try{

@@ -4,12 +4,12 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
+import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.app.ListFragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AdapterView;
 import android.widget.ListAdapter;
 import android.widget.ListView;
 import android.widget.SimpleAdapter;
@@ -27,49 +27,43 @@ import java.util.List;
 
 import it.mahd.taxi.Main;
 import it.mahd.taxi.R;
+import it.mahd.taxi.util.Controllers;
 import it.mahd.taxi.util.ServerRequest;
 
 /**
  * Created by salem on 2/13/16.
  */
 public class Reclamation extends ListFragment {
-    private static final String Tag_url = "url";
-    private static final String Tag_getAllReclamation = "/getAllReclamation";
-    private static final String Tag_token = "token";
-    private static final String Tag_id = "_id";
-    private static final String Tag_subject = "subject";
-    private static final String Tag_date = "date";
-    private static final String Tag_status = "status";
+    SharedPreferences pref;
+    Controllers conf = new Controllers();
+    ServerRequest sr = new ServerRequest();
     ArrayList<HashMap<String, String>> ReclamationList;
     JSONArray loads = null;
-    SharedPreferences pref;
-    ServerRequest sr = new ServerRequest();
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.reclamation, container, false);
 
         pref = getActivity().getSharedPreferences("AppTaxi", Context.MODE_PRIVATE);
-        int[] image = new int[] { R.mipmap.ic_launcher, R.mipmap.ic_launcher};
         List<NameValuePair> params = new ArrayList<NameValuePair>();
-        params.add(new BasicNameValuePair(Tag_token, pref.getString(Tag_token, "")));
+        params.add(new BasicNameValuePair(conf.tag_token, pref.getString(conf.tag_token, "")));
         ReclamationList = new ArrayList<HashMap<String, String>>();
-        JSONObject json = sr.getJSON(pref.getString(Tag_url, "") + Tag_getAllReclamation, params);
+        JSONObject json = sr.getJSON(conf.url_getAllReclamation, params);
         if(json != null){
             try{
                 if(json.getBoolean("res")) {
                     loads = json.getJSONArray("data");
                     for (int i = 0; i < loads.length(); i++) {
                         JSONObject c = loads.getJSONObject(i);
-                        String id = c.getString(Tag_id);
-                        String subject = c.getString(Tag_subject);
-                        String date = c.getString(Tag_date);
-                        Boolean status = c.getBoolean(Tag_status);
+                        String id = c.getString(conf.tag_id);
+                        String subject = c.getString(conf.tag_subject);
+                        String date = c.getString(conf.tag_date);
+                        Boolean status = c.getBoolean(conf.tag_status);
                         HashMap<String, String> map = new HashMap<String, String>();
-                        map.put(Tag_id, id);
-                        map.put(Tag_subject, subject);
-                        map.put(Tag_date, date);
-                        map.put(Tag_status, (status) ? Integer.toString(image[0]) : Integer.toString(image[1]));
+                        map.put(conf.tag_id, id);
+                        map.put(conf.tag_subject, subject);
+                        map.put(conf.tag_date, date);
+                        map.put(conf.tag_status, (status) ? "Now" : "");
                         ReclamationList.add(map);
                     }
                 }
@@ -78,24 +72,9 @@ public class Reclamation extends ListFragment {
             }
         }
         ListAdapter adapter = new SimpleAdapter(getActivity(), ReclamationList, R.layout.reclamation_list,
-                new String[] { Tag_status, Tag_subject, Tag_date, Tag_id }, new int[] { R.id.picture_iv, R.id.txt_name, R.id.txt_date, R.id.idRec });
+                new String[] { conf.tag_subject, conf.tag_status, conf.tag_date, conf.tag_id },
+                new int[] { R.id.subject_txt, R.id.status_txt, R.id.date_txt, R.id.idRec });
         setListAdapter(adapter);
-
-        ListView lv = getListView();
-        lv.setOnItemClickListener(new AdapterView.OnItemClickListener(){
-            @Override
-            public void onItemClick(AdapterView<?> adapter, View v, int position,
-                                    long arg3){
-                String idRec = ((TextView) v.findViewById(R.id.idRec)).getText().toString();
-                Bundle bundle=new Bundle();
-                bundle.putString("id", idRec);
-                new ReclamationMsg().setArguments(bundle);
-                FragmentTransaction ft = getFragmentManager().beginTransaction();
-                ft.replace(R.id.container_body, new ReclamationMsg());
-                ft.commit();
-                ((Main) getActivity()).getSupportActionBar().setTitle(getString(R.string.reclamation));
-            }
-        });
 
         FloatingActionButton AddReclamation_btn = (FloatingActionButton) rootView.findViewById(R.id.add_btn);
         AddReclamation_btn.setOnClickListener(new View.OnClickListener() {
@@ -108,6 +87,19 @@ public class Reclamation extends ListFragment {
             }
         });
         return rootView;
+    }
+
+    public void onListItemClick(ListView l, View view, int position, long id){
+        ViewGroup viewg = (ViewGroup)view;
+        TextView tv = (TextView) viewg.findViewById(R.id.idRec);
+        Fragment fr = new ReclamationMsg();
+        FragmentTransaction ft = getFragmentManager().beginTransaction();
+        Bundle args = new Bundle();
+        args.putString(conf.tag_id, tv.getText().toString());
+        fr.setArguments(args);
+        ft.replace(R.id.container_body, fr);
+        ft.commit();
+        ((Main) getActivity()).getSupportActionBar().setTitle(getString(R.string.reclamation));
     }
 
     @Override

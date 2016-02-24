@@ -50,17 +50,16 @@ public class ChatAdapter extends BaseAdapter {
             vi = inflater.inflate(R.layout.reclamation_chat, null);
 
         TextView msg = (TextView) vi.findViewById(R.id.message_txt);
-        msg.setText(message.body);
+        msg.setText(message.Message);
+        TextView date = (TextView) vi.findViewById(R.id.date_txt);
+        date.setText(message.Date);
         LinearLayout layout = (LinearLayout) vi.findViewById(R.id.bubble_layout);
         LinearLayout parent_layout = (LinearLayout) vi.findViewById(R.id.bubble_layout_parent);
 
-        // if message is mine then align to right
-        if (message.isMine) {
+        if (message.IsMe) {// if message is me then align to right
             //layout.setBackgroundResource(R.drawable.bubble2);
             parent_layout.setGravity(Gravity.RIGHT);
-        }
-        // If not mine then align to left
-        else {
+        }else {// If not me then align to left
             //layout.setBackgroundResource(R.drawable.bubble1);
             parent_layout.setGravity(Gravity.LEFT);
         }
