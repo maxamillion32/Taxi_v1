@@ -63,10 +63,10 @@ public class BookNow extends Fragment {
             longitude = 0;
         }
         MarkerOptions marker = new MarkerOptions().position(new LatLng(latitude, longitude)).title("Hello Maps");// create marker
-        MarkerOptions x = new MarkerOptions().position(new LatLng(35.005, 10.005)).title("Hello Maps");
         marker.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_ROSE));// Changing marker icon
-        x.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_ROSE));
         googleMap.addMarker(marker);// adding marker
+        MarkerOptions x = new MarkerOptions().position(new LatLng(35.005, 10.005)).title("Hello Maps");
+        x.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_ROSE));
         googleMap.addMarker(x);
         CameraPosition cameraPosition = new CameraPosition.Builder().target(new LatLng(latitude, longitude)).zoom(15).build();
         googleMap.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition));
