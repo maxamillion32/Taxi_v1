@@ -2,6 +2,7 @@ package it.mahd.taxi.activity;
 
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentTransaction;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -16,6 +17,7 @@ import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
 
+import it.mahd.taxi.Main;
 import it.mahd.taxi.R;
 import it.mahd.taxi.util.GPSTracker;
 
@@ -72,11 +74,6 @@ public class BookNow extends Fragment {
     }
 
     @Override
-    public void onDetach() {
-        super.onDetach();
-    }
-
-    @Override
     public void onResume() {
         super.onResume();
         mMapView.onResume();
@@ -92,6 +89,11 @@ public class BookNow extends Fragment {
     public void onDestroy() {
         super.onDestroy();
         mMapView.onDestroy();
+        FragmentTransaction ft = getFragmentManager().beginTransaction();
+        ft.replace(R.id.container_body, new Home());
+        ft.addToBackStack(null);
+        ft.commit();
+        ((Main) getActivity()).getSupportActionBar().setTitle(getString(R.string.home));
     }
 
     @Override

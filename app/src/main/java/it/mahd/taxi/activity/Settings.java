@@ -7,10 +7,12 @@ import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentTransaction;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import it.mahd.taxi.Main;
 import it.mahd.taxi.R;
 
 /**
@@ -32,5 +34,14 @@ public class Settings extends Fragment {
 
         pref = getActivity().getSharedPreferences("AppTaxi", Context.MODE_PRIVATE);
         return rootView;
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        FragmentTransaction ft = getFragmentManager().beginTransaction();
+        ft.replace(R.id.container_body, new Home());
+        ft.commit();
+        ((Main) getActivity()).getSupportActionBar().setTitle(getString(R.string.home));
     }
 }

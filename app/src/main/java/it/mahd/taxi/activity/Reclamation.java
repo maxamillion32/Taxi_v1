@@ -7,6 +7,7 @@ import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.app.ListFragment;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -33,10 +34,11 @@ import it.mahd.taxi.util.ServerRequest;
 /**
  * Created by salem on 2/13/16.
  */
-public class Reclamation extends ListFragment {
+public class Reclamation extends ListFragment implements SwipeRefreshLayout.OnRefreshListener {
     SharedPreferences pref;
     Controllers conf = new Controllers();
     ServerRequest sr = new ServerRequest();
+    private SwipeRefreshLayout Refresh_swipe;
     ArrayList<HashMap<String, String>> ReclamationList;
     JSONArray loads = null;
 
@@ -45,6 +47,36 @@ public class Reclamation extends ListFragment {
         View rootView = inflater.inflate(R.layout.reclamation, container, false);
 
         pref = getActivity().getSharedPreferences("AppTaxi", Context.MODE_PRIVATE);
+        Refresh_swipe = (SwipeRefreshLayout) rootView.findViewById(R.id.refresh_swipe);
+        Refresh_swipe.setOnRefreshListener(this);
+        Refresh_swipe.post(new Runnable() {
+                               public void run() {
+                                   Refresh_swipe.setRefreshing(true);
+                                   getAllReclamation();
+                               }
+                           }
+        );
+
+        FloatingActionButton AddReclamation_btn = (FloatingActionButton) rootView.findViewById(R.id.add_btn);
+        AddReclamation_btn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                FragmentTransaction ft = getFragmentManager().beginTransaction();
+                ft.replace(R.id.container_body, new ReclamationAdd());
+                ft.addToBackStack(null);
+                ft.commit();
+                ((Main) getActivity()).getSupportActionBar().setTitle(getString(R.string.reclamation_new));
+            }
+        });
+        return rootView;
+    }
+
+    public void onRefresh() {
+        getAllReclamation();
+    }
+
+    private void getAllReclamation() {
+        Refresh_swipe.setRefreshing(true);
         List<NameValuePair> params = new ArrayList<NameValuePair>();
         params.add(new BasicNameValuePair(conf.tag_token, pref.getString(conf.tag_token, "")));
         ReclamationList = new ArrayList<HashMap<String, String>>();
@@ -75,29 +107,19 @@ public class Reclamation extends ListFragment {
                 new String[] { conf.tag_subject, conf.tag_status, conf.tag_date, conf.tag_id },
                 new int[] { R.id.subject_txt, R.id.status_txt, R.id.date_txt, R.id.idRec });
         setListAdapter(adapter);
-
-        FloatingActionButton AddReclamation_btn = (FloatingActionButton) rootView.findViewById(R.id.add_btn);
-        AddReclamation_btn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                FragmentTransaction ft = getFragmentManager().beginTransaction();
-                ft.replace(R.id.container_body, new ReclamationAdd());
-                ft.commit();
-                ((Main) getActivity()).getSupportActionBar().setTitle(getString(R.string.reclamation_new));
-            }
-        });
-        return rootView;
+        Refresh_swipe.setRefreshing(false);
     }
 
     public void onListItemClick(ListView l, View view, int position, long id){
         ViewGroup viewg = (ViewGroup)view;
         TextView tv = (TextView) viewg.findViewById(R.id.idRec);
-        Fragment fr = new ReclamationMsg();
+        Fragment fr = new ReclamationChat();
         FragmentTransaction ft = getFragmentManager().beginTransaction();
         Bundle args = new Bundle();
         args.putString(conf.tag_id, tv.getText().toString());
         fr.setArguments(args);
         ft.replace(R.id.container_body, fr);
+        ft.addToBackStack(null);
         ft.commit();
         ((Main) getActivity()).getSupportActionBar().setTitle(getString(R.string.reclamation));
     }
@@ -105,5 +127,25 @@ public class Reclamation extends ListFragment {
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        FragmentTransaction ft = getFragmentManager().beginTransaction();
+        ft.replace(R.id.container_body, new Home());
+        ft.addToBackStack(null);
+        ft.commit();
+        ((Main) getActivity()).getSupportActionBar().setTitle(getString(R.string.home));
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+    }
+
+    @Override
+    public void onStop() {
+        super.onStop();
     }
 }

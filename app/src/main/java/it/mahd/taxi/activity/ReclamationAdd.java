@@ -117,4 +117,24 @@ public class ReclamationAdd extends Fragment {
             getActivity().getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_VISIBLE);
         }
     }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        FragmentTransaction ft = getFragmentManager().beginTransaction();
+        ft.replace(R.id.container_body, new Reclamation());
+        ft.addToBackStack(null);
+        ft.commit();
+        ((Main) getActivity()).getSupportActionBar().setTitle(getString(R.string.reclamation));
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+    }
+
+    @Override
+    public void onStop() {
+        super.onStop();
+    }
 }

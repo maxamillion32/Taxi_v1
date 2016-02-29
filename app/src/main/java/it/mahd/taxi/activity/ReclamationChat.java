@@ -7,6 +7,8 @@ import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentTransaction;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -20,6 +22,7 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import it.mahd.taxi.Main;
 import it.mahd.taxi.R;
 import it.mahd.taxi.util.ChatAdapter;
 import it.mahd.taxi.util.ChatMessage;
@@ -30,11 +33,12 @@ import it.mahd.taxi.util.ServerRequest;
 /**
  * Created by salem on 2/19/16.
  */
-public class ReclamationMsg extends Fragment implements OnClickListener {
+public class ReclamationChat extends Fragment implements OnClickListener, SwipeRefreshLayout.OnRefreshListener {
     SharedPreferences pref;
     Controllers conf = new Controllers();
     ServerRequest sr = new ServerRequest();
     Encrypt algo = new Encrypt();
+    private SwipeRefreshLayout RefreshChat_swipe;
     private EditText Message_etxt;
     private FloatingActionButton sendButton;
     private String idRec;
@@ -45,7 +49,7 @@ public class ReclamationMsg extends Fragment implements OnClickListener {
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        View rootView = inflater.inflate(R.layout.reclamation_msg, container, false);
+        View rootView = inflater.inflate(R.layout.reclamation_chat, container, false);
 
         idRec = getArguments().getString(conf.tag_id);
         Message_etxt = (EditText) rootView.findViewById(R.id.message_etxt);
@@ -56,10 +60,30 @@ public class ReclamationMsg extends Fragment implements OnClickListener {
         Message_lv.setTranscriptMode(ListView.TRANSCRIPT_MODE_ALWAYS_SCROLL);
         Message_lv.setStackFromBottom(true);
 
+
+
+        RefreshChat_swipe = (SwipeRefreshLayout) rootView.findViewById(R.id.refreshChat_swipe);
+        RefreshChat_swipe.setOnRefreshListener(this);
+        RefreshChat_swipe.post(new Runnable() {
+                               public void run() {
+                                   RefreshChat_swipe.setRefreshing(true);
+                                   getAllMsg();
+                               }
+                           }
+        );
+
+        return rootView;
+    }
+
+    public void onRefresh() {
+        getAllMsg();
+    }
+
+    private void getAllMsg() {
+        RefreshChat_swipe.setRefreshing(true);
         chatlist = new ArrayList();
         chatAdapter = new ChatAdapter(getActivity(), chatlist);
         Message_lv.setAdapter(chatAdapter);
-
         List<NameValuePair> params = new ArrayList<NameValuePair>();
         params.add(new BasicNameValuePair(conf.tag_id, idRec));
         JSONObject json = sr.getJSON(conf.url_getMessage, params);
@@ -81,7 +105,7 @@ public class ReclamationMsg extends Fragment implements OnClickListener {
                 e.printStackTrace();
             }
         }
-        return rootView;
+        RefreshChat_swipe.setRefreshing(false);
     }
 
     @Override
@@ -122,5 +146,25 @@ public class ReclamationMsg extends Fragment implements OnClickListener {
             case R.id.send_btn:
                 sendTextMessage(v);
         }
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        FragmentTransaction ft = getFragmentManager().beginTransaction();
+        ft.replace(R.id.container_body, new Reclamation());
+        ft.addToBackStack(null);
+        ft.commit();
+        ((Main) getActivity()).getSupportActionBar().setTitle(getString(R.string.reclamation));
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+    }
+
+    @Override
+    public void onStop() {
+        super.onStop();
     }
 }

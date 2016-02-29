@@ -136,6 +136,7 @@ public class Main extends AppCompatActivity implements FragmentDrawer.FragmentDr
                     FragmentManager fragmentManager = getSupportFragmentManager();
                     FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
                     fragmentTransaction.replace(R.id.container_body, fragment);
+                    fragmentTransaction.addToBackStack(null);
                     fragmentTransaction.commit();
                     getSupportActionBar().setTitle(title);
                 }else{
@@ -144,6 +145,7 @@ public class Main extends AppCompatActivity implements FragmentDrawer.FragmentDr
                     FragmentManager fragmentManager = getSupportFragmentManager();
                     FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
                     fragmentTransaction.replace(R.id.container_body, fragment);
+                    fragmentTransaction.addToBackStack(null);
                     fragmentTransaction.commit();
                     getSupportActionBar().setTitle(title);
                 }
@@ -151,6 +153,7 @@ public class Main extends AppCompatActivity implements FragmentDrawer.FragmentDr
                 FragmentManager fragmentManager = getSupportFragmentManager();
                 FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
                 fragmentTransaction.replace(R.id.container_body, fragment);
+                fragmentTransaction.addToBackStack(null);
                 fragmentTransaction.commit();
                 getSupportActionBar().setTitle(title);
             }

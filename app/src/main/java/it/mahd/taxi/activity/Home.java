@@ -44,16 +44,19 @@ public class Home extends Fragment {
                 //return commantre annd delete this
                 FragmentTransaction ft = getFragmentManager().beginTransaction();
                 ft.replace(R.id.container_body, new BookNow());
+                ft.addToBackStack(null);
                 ft.commit();
                 ((Main) getActivity()).getSupportActionBar().setTitle(getString(R.string.now));
                 /*if (pref.getString(Tag_token, "").equals("")){
                     FragmentTransaction ft = getFragmentManager().beginTransaction();
                     ft.replace(R.id.container_body, new Login());
+                    ft.addToBackStack(null);
                     ft.commit();
                     ((Main) getActivity()).getSupportActionBar().setTitle(getString(R.string.login));
                 }else{
                     FragmentTransaction ft = getFragmentManager().beginTransaction();
                     ft.replace(R.id.container_body, new BookNow());
+                    ft.addToBackStack(null);
                     ft.commit();
                     ((Main) getActivity()).getSupportActionBar().setTitle(getString(R.string.now));
                 }*/
@@ -67,11 +70,13 @@ public class Home extends Fragment {
                 if (pref.getString(Tag_token, "").equals("")){
                     FragmentTransaction ft = getFragmentManager().beginTransaction();
                     ft.replace(R.id.container_body, new Login());
+                    ft.addToBackStack(null);
                     ft.commit();
                     ((Main) getActivity()).getSupportActionBar().setTitle(getString(R.string.login));
                 }else{
                     FragmentTransaction ft = getFragmentManager().beginTransaction();
                     ft.replace(R.id.container_body, new BookAdvance());
+                    ft.addToBackStack(null);
                     ft.commit();
                     ((Main) getActivity()).getSupportActionBar().setTitle(getString(R.string.advance));
                 }
@@ -85,11 +90,13 @@ public class Home extends Fragment {
                 if (pref.getString(Tag_token, "").equals("")){
                     FragmentTransaction ft = getFragmentManager().beginTransaction();
                     ft.replace(R.id.container_body, new Login());
+                    ft.addToBackStack(null);
                     ft.commit();
                     ((Main) getActivity()).getSupportActionBar().setTitle(getString(R.string.login));
                 }else{
                     FragmentTransaction ft = getFragmentManager().beginTransaction();
                     ft.replace(R.id.container_body, new Reclamation());
+                    ft.addToBackStack(null);
                     ft.commit();
                     ((Main) getActivity()).getSupportActionBar().setTitle(getString(R.string.reclamation));
                 }
@@ -103,11 +110,13 @@ public class Home extends Fragment {
                 if (pref.getString(Tag_token, "").equals("")){
                     FragmentTransaction ft = getFragmentManager().beginTransaction();
                     ft.replace(R.id.container_body, new Login());
+                    ft.addToBackStack(null);
                     ft.commit();
                     ((Main) getActivity()).getSupportActionBar().setTitle(getString(R.string.login));
                 }else{
                     FragmentTransaction ft = getFragmentManager().beginTransaction();
                     ft.replace(R.id.container_body, new Profile());
+                    ft.addToBackStack(null);
                     ft.commit();
                     ((Main) getActivity()).getSupportActionBar().setTitle(getString(R.string.profile));
                 }
@@ -122,7 +131,8 @@ public class Home extends Fragment {
     }
 
     @Override
-    public void onDetach() {
-        super.onDetach();
+    public void onDestroy() {
+        super.onDestroy();
+        getActivity().finish();
     }
 }

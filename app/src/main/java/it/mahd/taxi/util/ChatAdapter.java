@@ -4,7 +4,6 @@ import java.util.ArrayList;
 
 import android.app.Activity;
 import android.content.Context;
-import android.graphics.Color;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -47,7 +46,7 @@ public class ChatAdapter extends BaseAdapter {
         ChatMessage message = (ChatMessage) chatMessageList.get(position);
         View vi = convertView;
         if (convertView == null)
-            vi = inflater.inflate(R.layout.reclamation_chat, null);
+            vi = inflater.inflate(R.layout.reclamation_msgview, null);
 
         TextView msg = (TextView) vi.findViewById(R.id.message_txt);
         msg.setText(message.Message);
