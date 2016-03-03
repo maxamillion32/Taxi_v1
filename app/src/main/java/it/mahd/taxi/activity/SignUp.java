@@ -46,6 +46,7 @@ import java.util.List;
 
 import it.mahd.taxi.Main;
 import it.mahd.taxi.R;
+import it.mahd.taxi.util.Controllers;
 import it.mahd.taxi.util.Encrypt;
 import it.mahd.taxi.util.ServerRequest;
 
@@ -82,6 +83,7 @@ public class SignUp extends Fragment {
 
     ServerRequest sr = new ServerRequest();
     SharedPreferences pref;
+    Controllers conf = new Controllers();
     private ArrayList<String> CountrysList, CitysList;
     private ArrayAdapter<String> cityAdapter, countryAdapter;
     JSONArray countrys = null, citys = null;
@@ -139,14 +141,6 @@ public class SignUp extends Fragment {
         Lname_etxt.addTextChangedListener(new MyTextWatcher(Lname_etxt));
         Email_etxt.addTextChangedListener(new MyTextWatcher(Email_etxt));
         Password_etxt.addTextChangedListener(new MyTextWatcher(Password_etxt));
-
-        if(!NetworkIsAvailable()){
-            Toast.makeText(getActivity(), "Network is unavailable!", Toast.LENGTH_SHORT).show();
-            SignUp_btn.setEnabled(false);
-        }
-        else {
-            SignUp_btn.setEnabled(true);
-        }
 
         CountrysList = new ArrayList<String>();
         CitysList = new ArrayList<String>();
@@ -240,7 +234,11 @@ public class SignUp extends Fragment {
         SignUp_btn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                submitForm();
+                if(conf.NetworkIsAvailable(getActivity())){
+                    submitForm();
+                }else{
+                    Toast.makeText(getActivity(), "Network is unavailable!", Toast.LENGTH_SHORT).show();
+                }
             }
         });
         Login_btn.setOnClickListener(new View.OnClickListener() {
@@ -297,6 +295,7 @@ public class SignUp extends Fragment {
                 if(json.getBoolean("res")){
                     FragmentTransaction ft = getFragmentManager().beginTransaction();
                     ft.replace(R.id.container_body, new Login());
+                    ft.addToBackStack(null);
                     ft.commit();
                     ((Main) getActivity()).getSupportActionBar().setTitle(getString(R.string.login));
                 }
@@ -396,8 +395,9 @@ public class SignUp extends Fragment {
     };
 
     @Override
-    public void onDetach() {
-        super.onDetach();
+    public void onDestroy() {
+        super.onDestroy();
+        getActivity().finish();
     }
 
     @Override

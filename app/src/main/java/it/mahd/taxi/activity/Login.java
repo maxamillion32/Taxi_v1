@@ -99,6 +99,7 @@ public class Login extends Fragment {
     private void SignUpForm() {
         FragmentTransaction ft = getFragmentManager().beginTransaction();
         ft.replace(R.id.container_body, new SignUp());
+        ft.addToBackStack(null);
         ft.commit();
         ((Main) getActivity()).getSupportActionBar().setTitle(getString(R.string.sign_up));
     }
@@ -145,6 +146,7 @@ public class Login extends Fragment {
 
                     FragmentTransaction ft = getFragmentManager().beginTransaction();
                     ft.replace(R.id.container_body, new Home());
+                    ft.addToBackStack(null);
                     ft.commit();
                     ((Main) getActivity()).getSupportActionBar().setTitle(getString(R.string.home));
                 }else{
@@ -207,8 +209,9 @@ public class Login extends Fragment {
     }
 
     @Override
-    public void onDetach() {
-        super.onDetach();
+    public void onDestroy() {
+        super.onDestroy();
+        getActivity().finish();
     }
 
     @Override

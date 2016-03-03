@@ -15,11 +15,13 @@ import android.widget.Button;
 import it.mahd.taxi.Main;
 import it.mahd.taxi.R;
 import it.mahd.taxi.model.FragmentDrawer;
+import it.mahd.taxi.util.Controllers;
 
 /**
  * Created by salem on 2/13/16.
  */
 public class Home extends Fragment {
+    Controllers conf = new Controllers();
     private static final String Tag_url = "url";
     private static final String Tag_token = "token";
     private Toolbar mToolbar;
@@ -70,12 +72,16 @@ public class Home extends Fragment {
                 if (pref.getString(Tag_token, "").equals("")){
                     FragmentTransaction ft = getFragmentManager().beginTransaction();
                     ft.replace(R.id.container_body, new Login());
-                    ft.addToBackStack(null);
                     ft.commit();
                     ((Main) getActivity()).getSupportActionBar().setTitle(getString(R.string.login));
                 }else{
+                    Fragment fr = new BookAdvance();
                     FragmentTransaction ft = getFragmentManager().beginTransaction();
-                    ft.replace(R.id.container_body, new BookAdvance());
+                    Bundle args = new Bundle();
+                    args.putDouble(conf.tag_latitude, 0);
+                    args.putDouble(conf.tag_longitude, 0);
+                    fr.setArguments(args);
+                    ft.replace(R.id.container_body, fr);
                     ft.addToBackStack(null);
                     ft.commit();
                     ((Main) getActivity()).getSupportActionBar().setTitle(getString(R.string.advance));
@@ -90,7 +96,6 @@ public class Home extends Fragment {
                 if (pref.getString(Tag_token, "").equals("")){
                     FragmentTransaction ft = getFragmentManager().beginTransaction();
                     ft.replace(R.id.container_body, new Login());
-                    ft.addToBackStack(null);
                     ft.commit();
                     ((Main) getActivity()).getSupportActionBar().setTitle(getString(R.string.login));
                 }else{
@@ -110,7 +115,6 @@ public class Home extends Fragment {
                 if (pref.getString(Tag_token, "").equals("")){
                     FragmentTransaction ft = getFragmentManager().beginTransaction();
                     ft.replace(R.id.container_body, new Login());
-                    ft.addToBackStack(null);
                     ft.commit();
                     ((Main) getActivity()).getSupportActionBar().setTitle(getString(R.string.login));
                 }else{

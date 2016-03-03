@@ -32,6 +32,18 @@
     <string name="message">Message</string>
     <string name="message_err">Enter the Message</string>
     <string name="send">Send</string>
+    <string name="latitude">Latitude</string>
+    <string name="longitude">Longitude</string>
+    <string name="repeat">Repeat</string>
+    <string name="position">Position</string>
+    <string name="description">Description</string>
+    <string name="mon">MON</string>
+    <string name="tue">TUE</string>
+    <string name="wed">WED</string>
+    <string name="thu">THU</string>
+    <string name="fri">FRI</string>
+    <string name="sat">SAT</string>
+    <string name="sun">SUN</string>
 
     <string-array name="nav_drawer_labels">
         <item>@string/home</item>

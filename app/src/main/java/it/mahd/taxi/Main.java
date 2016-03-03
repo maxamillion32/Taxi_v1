@@ -28,9 +28,11 @@ import it.mahd.taxi.activity.Profile;
 import it.mahd.taxi.activity.Reclamation;
 import it.mahd.taxi.activity.Settings;
 import it.mahd.taxi.model.FragmentDrawer;
+import it.mahd.taxi.util.Controllers;
 import it.mahd.taxi.util.ServerRequest;
 
 public class Main extends AppCompatActivity implements FragmentDrawer.FragmentDrawerListener {
+    Controllers conf = new Controllers();
     private static String TAG = Main.class.getSimpleName();
     private static final String url = "http://10.0.2.2:4004";
     private static final String Tag_url = "url";
@@ -150,6 +152,18 @@ public class Main extends AppCompatActivity implements FragmentDrawer.FragmentDr
                     getSupportActionBar().setTitle(title);
                 }
             }else{
+                if(title.equals(getString(R.string.advance))){
+                    FragmentManager fragmentManager = getSupportFragmentManager();
+                    FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+                    Bundle args = new Bundle();
+                    args.putDouble(conf.tag_latitude, 0);
+                    args.putDouble(conf.tag_longitude, 0);
+                    fragment.setArguments(args);
+                    fragmentTransaction.replace(R.id.container_body, fragment);
+                    fragmentTransaction.addToBackStack(null);
+                    fragmentTransaction.commit();
+                    getSupportActionBar().setTitle(title);
+                }
                 FragmentManager fragmentManager = getSupportFragmentManager();
                 FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
                 fragmentTransaction.replace(R.id.container_body, fragment);
