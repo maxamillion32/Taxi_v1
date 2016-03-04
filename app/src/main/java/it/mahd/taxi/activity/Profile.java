@@ -30,6 +30,7 @@ import java.util.List;
 import it.mahd.taxi.Main;
 import it.mahd.taxi.R;
 import it.mahd.taxi.util.Calculator;
+import it.mahd.taxi.util.Controllers;
 import it.mahd.taxi.util.Encrypt;
 import it.mahd.taxi.util.ServerRequest;
 
@@ -37,26 +38,15 @@ import it.mahd.taxi.util.ServerRequest;
  * Created by salem on 2/13/16.
  */
 public class Profile extends Fragment {
-    private static final String Tag_url = "url";
-    private static final String Tag_profile = "/profile";
-    private static final String Tag_logout = "/logout";
-    private static final String Tag_token = "token";
-    private static final String Tag_fname = "fname";
-    private static final String Tag_lname = "lname";
-    private static final String Tag_gender = "gender";
-    private static final String Tag_dateN = "dateN";
-    private static final String Tag_country = "country";
-    private static final String Tag_city = "city";
-    private static final String Tag_email = "email";
-    private static final String Tag_phone = "phone";
-    private static final String Tag_picture = "picture";
-    private static final String Tag_key = "key";
-    private String fname, lname, gender, dateN, country, city, email, phone, picture;
-    TextView Username_txt, City_txt, Age_txt, Email_txt, Phone_txt;
-    ImageView Picture_iv;
-    private Button Logout_btn;
-    ServerRequest sr = new ServerRequest();
     SharedPreferences pref;
+    ServerRequest sr = new ServerRequest();
+    Controllers conf = new Controllers();
+
+    private TextView Username_txt, City_txt, Age_txt, Email_txt, Phone_txt;
+    private ImageView Picture_iv;
+    private Button Logout_btn;
+
+    private String fname, lname, gender, dateN, country, city, email, phone, picture;
 
     public Profile() {}
 
@@ -72,22 +62,22 @@ public class Profile extends Fragment {
         pref = getActivity().getSharedPreferences("AppTaxi", Context.MODE_PRIVATE);
         Encrypt algo = new Encrypt();
         List<NameValuePair> params = new ArrayList<NameValuePair>();
-        params.add(new BasicNameValuePair(Tag_token, pref.getString(Tag_token, "")));
-        JSONObject json = sr.getJSON(pref.getString(Tag_url, "") + Tag_profile, params);
+        params.add(new BasicNameValuePair(conf.tag_token, pref.getString(conf.tag_token, "")));
+        JSONObject json = sr.getJSON(conf.url_profile, params);
         if(json != null){
             try{
                 if(json.getBoolean("res")) {
-                    int keyVirtual = Integer.parseInt(json.getString(Tag_key));
+                    int keyVirtual = Integer.parseInt(json.getString(conf.tag_key));
                     String newKey = algo.key(keyVirtual);
-                    fname = algo.enc2dec(json.getString(Tag_fname), newKey);
-                    lname = algo.enc2dec(json.getString(Tag_lname), newKey);
-                    gender = algo.enc2dec(json.getString(Tag_gender), newKey);
-                    dateN = algo.enc2dec(json.getString(Tag_dateN), newKey);
-                    country = algo.enc2dec(json.getString(Tag_country), newKey);
-                    city = algo.enc2dec(json.getString(Tag_city), newKey);
-                    email = algo.enc2dec(json.getString(Tag_email), newKey);
-                    phone = algo.enc2dec(json.getString(Tag_phone), newKey);
-                    picture = json.getString(Tag_picture);
+                    fname = algo.enc2dec(json.getString(conf.tag_fname), newKey);
+                    lname = algo.enc2dec(json.getString(conf.tag_lname), newKey);
+                    gender = algo.enc2dec(json.getString(conf.tag_gender), newKey);
+                    dateN = algo.enc2dec(json.getString(conf.tag_dateN), newKey);
+                    country = algo.enc2dec(json.getString(conf.tag_country), newKey);
+                    city = algo.enc2dec(json.getString(conf.tag_city), newKey);
+                    email = algo.enc2dec(json.getString(conf.tag_email), newKey);
+                    phone = algo.enc2dec(json.getString(conf.tag_phone), newKey);
+                    picture = json.getString(conf.tag_picture);
                 }
             }catch (JSONException e) {
                 e.printStackTrace();
@@ -139,16 +129,16 @@ public class Profile extends Fragment {
             @Override
             public void onClick(View view) {
                 List<NameValuePair> params = new ArrayList<NameValuePair>();
-                params.add(new BasicNameValuePair(Tag_token, pref.getString(Tag_token, "")));
-                JSONObject json = sr.getJSON(pref.getString(Tag_url, "") + Tag_logout, params);
+                params.add(new BasicNameValuePair(conf.tag_token, pref.getString(conf.tag_token, "")));
+                JSONObject json = sr.getJSON(conf.url_logout, params);
                 if(json != null){
                     try{
                         if(json.getBoolean("res")){
                             SharedPreferences.Editor edit = pref.edit();
-                            edit.putString(Tag_token, "");
-                            edit.putString(Tag_fname, "");
-                            edit.putString(Tag_lname, "");
-                            edit.putString(Tag_picture, "");
+                            edit.putString(conf.tag_token, "");
+                            edit.putString(conf.tag_fname, "");
+                            edit.putString(conf.tag_lname, "");
+                            edit.putString(conf.tag_picture, "");
                             edit.commit();
 
                             RelativeLayout rl = (RelativeLayout) getActivity().findViewById(R.id.nav_header_container);

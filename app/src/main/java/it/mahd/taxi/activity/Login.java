@@ -35,6 +35,7 @@ import java.util.List;
 
 import it.mahd.taxi.Main;
 import it.mahd.taxi.R;
+import it.mahd.taxi.util.Controllers;
 import it.mahd.taxi.util.Encrypt;
 import it.mahd.taxi.util.ServerRequest;
 
@@ -42,22 +43,13 @@ import it.mahd.taxi.util.ServerRequest;
  * Created by salem on 2/13/16.
  */
 public class Login extends Fragment {
-    private static final String Tag_url = "url";
-    private static final String Tag_login = "/login";
-    private static final String Tag_token = "token";
-    private static final String Tag_fname = "fname";
-    private static final String Tag_lname = "lname";
-    private static final String Tag_picture = "picture";
-    private static final String Tag_email = "email";
-    private static final String Tag_password = "password";
-    private static final String Tag_key = "key";
+    SharedPreferences pref;
+    ServerRequest sr = new ServerRequest();
+    Controllers conf = new Controllers();
 
     private EditText Email_etxt, Password_etxt;
     private TextInputLayout Email_input, Password_input;
     private Button Login_btn, SignUp_btn;
-
-    ServerRequest sr = new ServerRequest();
-    SharedPreferences pref;
 
     public Login() {}
 
@@ -112,26 +104,26 @@ public class Login extends Fragment {
         int x = algo.keyVirtual();
         String key = algo.key(x);
         List<NameValuePair> params = new ArrayList<NameValuePair>();
-        params.add(new BasicNameValuePair(Tag_email, algo.dec2enc(Email_etxt.getText().toString(), key)));
-        params.add(new BasicNameValuePair(Tag_password, algo.dec2enc(Password_etxt.getText().toString(), key)));
-        params.add(new BasicNameValuePair(Tag_key, x + ""));
-        JSONObject json = sr.getJSON(pref.getString(Tag_url, "") + Tag_login, params);
+        params.add(new BasicNameValuePair(conf.tag_email, algo.dec2enc(Email_etxt.getText().toString(), key)));
+        params.add(new BasicNameValuePair(conf.tag_password, algo.dec2enc(Password_etxt.getText().toString(), key)));
+        params.add(new BasicNameValuePair(conf.tag_key, x + ""));
+        JSONObject json = sr.getJSON(conf.url_login, params);
         if(json != null){
             try{
                 String jsonstr = json.getString("response");
                 if(json.getBoolean("res")) {
-                    String token = json.getString(Tag_token);
-                    int keyVirtual = Integer.parseInt(json.getString(Tag_key));
+                    String token = json.getString(conf.tag_token);
+                    int keyVirtual = Integer.parseInt(json.getString(conf.tag_key));
                     String newKey = algo.key(keyVirtual);
-                    String fname = algo.enc2dec(json.getString(Tag_fname), newKey);
-                    String lname = algo.enc2dec(json.getString(Tag_lname), newKey);
-                    String picture = json.getString(Tag_picture);
+                    String fname = algo.enc2dec(json.getString(conf.tag_fname), newKey);
+                    String lname = algo.enc2dec(json.getString(conf.tag_lname), newKey);
+                    String picture = json.getString(conf.tag_picture);
 
                     SharedPreferences.Editor edit = pref.edit();
-                    edit.putString(Tag_token, token);
-                    edit.putString(Tag_fname, fname);
-                    edit.putString(Tag_lname, lname);
-                    edit.putString(Tag_picture, picture);
+                    edit.putString(conf.tag_token, token);
+                    edit.putString(conf.tag_fname, fname);
+                    edit.putString(conf.tag_lname, lname);
+                    edit.putString(conf.tag_picture, picture);
                     edit.commit();
 
                     RelativeLayout rl = (RelativeLayout) getActivity().findViewById(R.id.nav_header_container);

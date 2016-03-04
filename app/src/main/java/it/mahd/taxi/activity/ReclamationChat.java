@@ -38,9 +38,11 @@ public class ReclamationChat extends Fragment implements OnClickListener, SwipeR
     Controllers conf = new Controllers();
     ServerRequest sr = new ServerRequest();
     Encrypt algo = new Encrypt();
+
     private SwipeRefreshLayout RefreshChat_swipe;
     private EditText Message_etxt;
     private FloatingActionButton sendButton;
+
     private String idRec;
     public static ArrayList chatlist;
     public static ChatAdapter chatAdapter;

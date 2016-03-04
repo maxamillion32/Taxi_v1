@@ -1,24 +1,73 @@
 <?xml version="1.0" encoding="utf-8"?>
-<ScrollView
+<android.support.design.widget.CoordinatorLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="fill_parent"
-    android:layout_height="match_parent">
+    android:layout_height="fill_parent"
+    android:gravity="center"
+    android:orientation="vertical"
+    android:padding="20dp">
 
-    <android.support.design.widget.CoordinatorLayout
+    <ScrollView
         android:layout_width="fill_parent"
-        android:layout_height="match_parent"
+        android:layout_height="wrap_content"
         android:orientation="vertical"
-        android:gravity="center">
+        android:layout_gravity="center">
 
         <LinearLayout
-            android:layout_width="fill_parent"
-            android:layout_height="match_parent"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
             android:orientation="vertical"
-            android:gravity="center"
-            android:paddingLeft="20dp"
-            android:paddingRight="20dp"
-            android:paddingTop="20dp"
-            android:paddingBottom="20dp">
+            android:gravity="center" >
+
+            <HorizontalScrollView
+                android:layout_width="fill_parent"
+                android:layout_height="match_parent"
+                android:layout_gravity="center">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:orientation="horizontal"
+                    android:gravity="center">
+
+                    <LinearLayout
+                        android:layout_width="fill_parent"
+                        android:layout_height="match_parent"
+                        android:layout_weight="1"
+                        android:orientation="vertical"
+                        android:gravity="center">
+
+                        <TextView
+                            android:id="@+id/latitude_txt"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:textSize="18dp"
+                            android:gravity="center"
+                            android:hint="@string/latitude"/>
+
+                        <TextView
+                            android:id="@+id/longitude_txt"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:textSize="18dp"
+                            android:gravity="center"
+                            android:hint="@string/longitude"/>
+                    </LinearLayout>
+
+                    <android.support.design.widget.FloatingActionButton
+                        android:id="@+id/position_btn"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="bottom|end"
+                        android:layout_margin="@dimen/activity_vertical_margin"
+                        android:layout_alignParentRight="true"
+                        android:layout_alignParentBottom="true"
+                        android:layout_marginRight="15dp"
+                        android:layout_marginBottom="15dp"
+                        android:src="@android:drawable/ic_dialog_map" />
+                </LinearLayout>
+            </HorizontalScrollView>
 
             <TextView
                 android:id="@+id/date_txt"
@@ -33,54 +82,6 @@
                 android:layout_height="wrap_content"
                 android:textSize="18dp"
                 android:gravity="center"/>
-
-            <HorizontalScrollView
-                android:layout_width="fill_parent"
-                android:layout_height="wrap_content"
-                android:gravity="center">
-
-            <LinearLayout
-                android:layout_width="fill_parent"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                android:gravity="center">
-
-                <LinearLayout
-                    android:layout_width="fill_parent"
-                    android:layout_height="match_parent"
-                    android:orientation="vertical"
-                    android:gravity="center">
-
-                    <TextView
-                        android:id="@+id/latitude_txt"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:textSize="18dp"
-                        android:gravity="center"
-                        android:hint="@string/latitude"/>
-
-                    <TextView
-                        android:id="@+id/longitude_txt"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:textSize="18dp"
-                        android:gravity="center"
-                        android:hint="@string/longitude"/>
-                </LinearLayout>
-
-                <android.support.design.widget.FloatingActionButton
-                    android:id="@+id/position_btn"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="bottom|end"
-                    android:layout_margin="@dimen/activity_vertical_margin"
-                    android:layout_alignParentRight="true"
-                    android:layout_alignParentBottom="true"
-                    android:layout_marginRight="15dp"
-                    android:layout_marginBottom="15dp"
-                    android:src="@android:drawable/ic_dialog_map" />
-            </LinearLayout>
-            </HorizontalScrollView>
 
             <Switch
                 android:id="@+id/repeat_swit"
@@ -102,59 +103,59 @@
                     android:orientation="horizontal"
                     android:gravity="center">
 
-                <ToggleButton
-                    android:id="@+id/mon_btg"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:textOn="@string/mon"
-                    android:textOff="@string/mon"
-                    android:checked="true"/>
+                    <ToggleButton
+                        android:id="@+id/mon_btg"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textOn="@string/mon"
+                        android:textOff="@string/mon"
+                        android:checked="true"/>
 
-                <ToggleButton
-                    android:id="@+id/tue_btg"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:textOn="@string/tue"
-                    android:textOff="@string/tue"
-                    android:checked="true" />
+                    <ToggleButton
+                        android:id="@+id/tue_btg"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textOn="@string/tue"
+                        android:textOff="@string/tue"
+                        android:checked="true" />
 
-                <ToggleButton
-                    android:id="@+id/wed_btg"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:textOn="@string/wed"
-                    android:textOff="@string/wed"
-                    android:checked="true" />
+                    <ToggleButton
+                        android:id="@+id/wed_btg"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textOn="@string/wed"
+                        android:textOff="@string/wed"
+                        android:checked="true" />
 
-                <ToggleButton
-                    android:id="@+id/thu_btg"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:textOn="@string/thu"
-                    android:textOff="@string/thu"
-                    android:checked="true" />
+                    <ToggleButton
+                        android:id="@+id/thu_btg"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textOn="@string/thu"
+                        android:textOff="@string/thu"
+                        android:checked="true" />
 
-                <ToggleButton
-                    android:id="@+id/fri_btg"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:textOn="@string/fri"
-                    android:textOff="@string/fri"
-                    android:checked="true" />
+                    <ToggleButton
+                        android:id="@+id/fri_btg"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textOn="@string/fri"
+                        android:textOff="@string/fri"
+                        android:checked="true" />
 
-                <ToggleButton
-                    android:id="@+id/sat_btg"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:textOn="@string/sat"
-                    android:textOff="@string/sat"/>
+                    <ToggleButton
+                        android:id="@+id/sat_btg"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textOn="@string/sat"
+                        android:textOff="@string/sat"/>
 
-                <ToggleButton
-                    android:id="@+id/sun_btg"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:textOn="@string/sun"
-                    android:textOff="@string/sun"/>
+                    <ToggleButton
+                        android:id="@+id/sun_btg"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textOn="@string/sun"
+                        android:textOff="@string/sun"/>
                 </LinearLayout>
             </HorizontalScrollView>
 
@@ -185,5 +186,5 @@
                 android:textSize="18sp"
                 android:enabled="false"/>
         </LinearLayout>
-    </android.support.design.widget.CoordinatorLayout>
-</ScrollView>
+    </ScrollView>
+</android.support.design.widget.CoordinatorLayout>

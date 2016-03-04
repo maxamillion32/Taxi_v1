@@ -54,25 +54,9 @@ import it.mahd.taxi.util.ServerRequest;
  * Created by salem on 2/13/16.
  */
 public class SignUp extends Fragment {
-    private static final String Tag_url = "url";
-    private static final String Tag_getCountry = "/getAllCountry";
-    private static final String Tag_getCity = "/getAllCity";
-    private static final String Tag_signup = "/signup";
-    private static final String Tag_name = "name";
-    private static final String Tag_fname = "fname";
-    private static final String Tag_lname = "lname";
-    private static final String Tag_gender = "gender";
-    private static final String Tag_dateN = "dateN";
-    private static final String Tag_country = "country";
-    private static final String Tag_city = "city";
-    private static final String Tag_email = "email";
-    private static final String Tag_password = "password";
-    private static final String Tag_phone = "phone";
-    private static final String Tag_picture = "picture";
-    private static final String Tag_key = "key";
-    private int year, month, day;
-    private static final int SELECT_PICTURE = 1;
-    private String imagePath;
+    SharedPreferences pref;
+    ServerRequest sr = new ServerRequest();
+    Controllers conf = new Controllers();
 
     private EditText Fname_etxt, Lname_etxt, Email_etxt, Password_etxt, Phone_etxt;
     private TextView DateN_txt;
@@ -81,9 +65,9 @@ public class SignUp extends Fragment {
     private Button Login_btn, SignUp_btn;
     private ImageView Picture_iv;
 
-    ServerRequest sr = new ServerRequest();
-    SharedPreferences pref;
-    Controllers conf = new Controllers();
+    private int year, month, day;
+    private static final int SELECT_PICTURE = 1;
+    private String imagePath;
     private ArrayList<String> CountrysList, CitysList;
     private ArrayAdapter<String> cityAdapter, countryAdapter;
     JSONArray countrys = null, citys = null;
@@ -145,14 +129,14 @@ public class SignUp extends Fragment {
         CountrysList = new ArrayList<String>();
         CitysList = new ArrayList<String>();
         List<NameValuePair> countryParams = new ArrayList<NameValuePair>();
-        JSONObject json = sr.getJSON(pref.getString(Tag_url, "") + Tag_getCountry, countryParams);
+        JSONObject json = sr.getJSON(conf.url_getAllCountry, countryParams);
         if(json != null){
             try{
                 if(json.getBoolean("res")){
                     countrys = json.getJSONArray("data");
                     for (int i=0; i<countrys.length(); i++) {
                         JSONObject c = countrys.getJSONObject(i);
-                        CountrysList.add(c.getString(Tag_name));
+                        CountrysList.add(c.getString(conf.tag_name));
                     }
                 }
             }catch (JSONException e) {
@@ -196,15 +180,15 @@ public class SignUp extends Fragment {
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                 CitysList = new ArrayList<String>();
                 List<NameValuePair> cityParams = new ArrayList<NameValuePair>();
-                cityParams.add(new BasicNameValuePair(Tag_name, Country_sp.getSelectedItem().toString()));
-                JSONObject jsonx = sr.getJSON(pref.getString(Tag_url, "") + Tag_getCity, cityParams);
+                cityParams.add(new BasicNameValuePair(conf.tag_name, Country_sp.getSelectedItem().toString()));
+                JSONObject jsonx = sr.getJSON(conf.url_getAllCity, cityParams);
                 if (jsonx != null) {
                     try {
                         if (jsonx.getBoolean("res")) {
                             citys = jsonx.getJSONArray("data");
                             for (int i = 0; i < citys.length(); i++) {
                                 JSONObject x = citys.getJSONObject(i);
-                                CitysList.add(x.getString(Tag_name));
+                                CitysList.add(x.getString(conf.tag_name));
                             }
                         }
                     } catch (JSONException e) {
@@ -276,18 +260,18 @@ public class SignUp extends Fragment {
         int x = algo.keyVirtual();
         String key = algo.key(x);
         List<NameValuePair> params = new ArrayList<NameValuePair>();
-        params.add(new BasicNameValuePair(Tag_fname, algo.dec2enc(Fname_etxt.getText().toString(), key)));
-        params.add(new BasicNameValuePair(Tag_lname, algo.dec2enc(Lname_etxt.getText().toString(), key)));
-        params.add(new BasicNameValuePair(Tag_gender, algo.dec2enc(Gender_sp.getSelectedItem().toString(), key)));
-        params.add(new BasicNameValuePair(Tag_dateN, algo.dec2enc(DateN_txt.getText().toString(), key)));
-        params.add(new BasicNameValuePair(Tag_country, algo.dec2enc(Country_sp.getSelectedItem().toString(), key)));
-        params.add(new BasicNameValuePair(Tag_city, algo.dec2enc(City_sp.getSelectedItem().toString(), key)));
-        params.add(new BasicNameValuePair(Tag_email, algo.dec2enc(Email_etxt.getText().toString(), key)));
-        params.add(new BasicNameValuePair(Tag_password, algo.dec2enc(Password_etxt.getText().toString(), key)));
-        params.add(new BasicNameValuePair(Tag_phone, algo.dec2enc(Phone_etxt.getText().toString(), key)));
-        params.add(new BasicNameValuePair(Tag_picture, getStringPicture()));
-        params.add(new BasicNameValuePair(Tag_key, x + ""));
-        JSONObject json = sr.getJSON(pref.getString(Tag_url, "") + Tag_signup, params);
+        params.add(new BasicNameValuePair(conf.tag_fname, algo.dec2enc(Fname_etxt.getText().toString(), key)));
+        params.add(new BasicNameValuePair(conf.tag_lname, algo.dec2enc(Lname_etxt.getText().toString(), key)));
+        params.add(new BasicNameValuePair(conf.tag_gender, algo.dec2enc(Gender_sp.getSelectedItem().toString(), key)));
+        params.add(new BasicNameValuePair(conf.tag_dateN, algo.dec2enc(DateN_txt.getText().toString(), key)));
+        params.add(new BasicNameValuePair(conf.tag_country, algo.dec2enc(Country_sp.getSelectedItem().toString(), key)));
+        params.add(new BasicNameValuePair(conf.tag_city, algo.dec2enc(City_sp.getSelectedItem().toString(), key)));
+        params.add(new BasicNameValuePair(conf.tag_email, algo.dec2enc(Email_etxt.getText().toString(), key)));
+        params.add(new BasicNameValuePair(conf.tag_password, algo.dec2enc(Password_etxt.getText().toString(), key)));
+        params.add(new BasicNameValuePair(conf.tag_phone, algo.dec2enc(Phone_etxt.getText().toString(), key)));
+        params.add(new BasicNameValuePair(conf.tag_picture, getStringPicture()));
+        params.add(new BasicNameValuePair(conf.tag_key, x + ""));
+        JSONObject json = sr.getJSON(conf.url_signup, params);
         if(json != null){
             try{
                 String jsonstr = json.getString("response");

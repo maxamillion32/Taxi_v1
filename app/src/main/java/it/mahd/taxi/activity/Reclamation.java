@@ -38,6 +38,7 @@ public class Reclamation extends ListFragment implements SwipeRefreshLayout.OnRe
     SharedPreferences pref;
     Controllers conf = new Controllers();
     ServerRequest sr = new ServerRequest();
+
     private SwipeRefreshLayout Refresh_swipe;
     ArrayList<HashMap<String, String>> ReclamationList;
     JSONArray loads = null;

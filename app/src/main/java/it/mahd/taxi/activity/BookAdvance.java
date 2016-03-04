@@ -273,9 +273,9 @@ public class BookAdvance extends Fragment {
         JSONObject json = sr.getJSON(conf.url_addBookAdvance, params);
         if(json != null){
             try{
-                String jsonstr = json.getString("response");
+                String jsonstr = json.getString(conf.response);
                 Toast.makeText(getActivity(),jsonstr,Toast.LENGTH_LONG).show();
-                if(json.getBoolean("res")){
+                if(json.getBoolean(conf.res)){
                     FragmentTransaction ft = getFragmentManager().beginTransaction();
                     ft.replace(R.id.container_body, new Home());
                     ft.addToBackStack(null);

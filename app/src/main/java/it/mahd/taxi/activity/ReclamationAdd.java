@@ -35,6 +35,7 @@ public class ReclamationAdd extends Fragment {
     SharedPreferences pref;
     Controllers conf = new Controllers();
     ServerRequest sr = new ServerRequest();
+
     private TextInputLayout Subject_input, Msg_input;
     private EditText Subject_etxt, Msg_etxt;
     private Button Send_btn;

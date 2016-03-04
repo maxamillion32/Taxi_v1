@@ -14,12 +14,31 @@ public class Controllers {
     public static final String url_addMessage = url + "/addMessage";
     public static final String url_getMessage = url + "/getAllMessage";
     public static final String url_addBookAdvance = url + "/addBookAdvance";
+    public static final String url_login = url + "/login";
+    public static final String url_profile = url + "/profile";
+    public static final String url_logout = url + "/logout";
+    public static final String url_getAllCountry = url + "/getAllCountry";
+    public static final String url_getAllCity = url + "/getAllCity";
+    public static final String url_signup = url + "/signup";
+
+    public static final String res = "res";
+    public static final String response = "response";
+
     public static final String tag_key = "key";
     public static final String tag_id = "_id";
     public static final String tag_token = "token";
     public static final String tag_username = "username";
+    public static final String tag_name = "name";
     public static final String tag_fname = "fname";
     public static final String tag_lname = "lname";
+    public static final String tag_picture = "picture";
+    public static final String tag_email = "email";
+    public static final String tag_password = "password";
+    public static final String tag_gender = "gender";
+    public static final String tag_dateN = "dateN";
+    public static final String tag_country = "country";
+    public static final String tag_city = "city";
+    public static final String tag_phone = "phone";
     public static final String tag_subject = "subject";
     public static final String tag_message = "message";
     public static final String tag_date = "date";

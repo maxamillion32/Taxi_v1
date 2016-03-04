@@ -32,20 +32,13 @@ import it.mahd.taxi.util.Controllers;
 import it.mahd.taxi.util.ServerRequest;
 
 public class Main extends AppCompatActivity implements FragmentDrawer.FragmentDrawerListener {
-    Controllers conf = new Controllers();
-    private static String TAG = Main.class.getSimpleName();
-    private static final String url = "http://10.0.2.2:4004";
-    private static final String Tag_url = "url";
-    private static final String Tag_logout = "/logout";
-    private static final String Tag_token = "token";
-    private static final String Tag_fname = "fname";
-    private static final String Tag_lname = "lname";
-    private static final String Tag_picture = "picture";
-    public Toolbar mToolbar;
-    private FragmentDrawer drawerFragment;
-
     SharedPreferences pref;
     ServerRequest sr = new ServerRequest();
+    Controllers conf = new Controllers();
+
+    public Toolbar mToolbar;
+    private FragmentDrawer drawerFragment;
+    //private static String TAG = Main.class.getSimpleName();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -53,9 +46,9 @@ public class Main extends AppCompatActivity implements FragmentDrawer.FragmentDr
         setContentView(R.layout.main);
 
         pref = getSharedPreferences("AppTaxi", MODE_PRIVATE);
-        SharedPreferences.Editor edit = pref.edit();
+        /*SharedPreferences.Editor edit = pref.edit();
         edit.putString(Tag_url, url);
-        edit.commit();
+        edit.commit();*/
         mToolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(mToolbar);
         getSupportActionBar().setDisplayShowHomeEnabled(true);
@@ -63,14 +56,14 @@ public class Main extends AppCompatActivity implements FragmentDrawer.FragmentDr
         drawerFragment.setUp(R.id.fragment_navigation_drawer, (DrawerLayout) findViewById(R.id.drawer_layout), mToolbar);
         drawerFragment.setDrawerListener(this);
         displayView(0);
-        if(!pref.getString(Tag_token, "").equals("")){
+        if(!pref.getString(conf.tag_token, "").equals("")){
             RelativeLayout rl = (RelativeLayout) findViewById(R.id.nav_header_container);
             LayoutInflater inflater = (LayoutInflater) getSystemService(Context.LAYOUT_INFLATER_SERVICE);
             View vi = inflater.inflate(R.layout.toolnav_drawer, null);
             TextView tv = (TextView) vi.findViewById(R.id.usernameTool_txt);
-            tv.setText(pref.getString(Tag_fname, "") + " " + pref.getString(Tag_lname, ""));
+            tv.setText(pref.getString(conf.tag_fname, "") + " " + pref.getString(conf.tag_lname, ""));
             ImageView im = (ImageView) vi.findViewById(R.id.pictureTool_iv);
-            byte[] imageAsBytes = Base64.decode(pref.getString(Tag_picture, "").getBytes(), Base64.DEFAULT);
+            byte[] imageAsBytes = Base64.decode(pref.getString(conf.tag_picture, "").getBytes(), Base64.DEFAULT);
             im.setImageBitmap(BitmapFactory.decodeByteArray(imageAsBytes, 0, imageAsBytes.length));
             rl.addView(vi);
         }
@@ -133,7 +126,7 @@ public class Main extends AppCompatActivity implements FragmentDrawer.FragmentDr
         }
 
         if (fragment != null) {
-            if(pref.getString(Tag_token, "").equals("")){
+            if(pref.getString(conf.tag_token, "").equals("")){
                 if(title.equals(getString(R.string.home)) ||title.equals(getString(R.string.settings))) {
                     FragmentManager fragmentManager = getSupportFragmentManager();
                     FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();

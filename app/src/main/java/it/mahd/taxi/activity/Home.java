@@ -21,12 +21,12 @@ import it.mahd.taxi.util.Controllers;
  * Created by salem on 2/13/16.
  */
 public class Home extends Fragment {
+    SharedPreferences pref;
     Controllers conf = new Controllers();
-    private static final String Tag_url = "url";
-    private static final String Tag_token = "token";
+
     private Toolbar mToolbar;
     private FragmentDrawer drawerFragment;
-    SharedPreferences pref;
+
     public Home() {}
 
     @Override
@@ -69,7 +69,7 @@ public class Home extends Fragment {
         Advance_btn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (pref.getString(Tag_token, "").equals("")){
+                if (pref.getString(conf.tag_token, "").equals("")){
                     FragmentTransaction ft = getFragmentManager().beginTransaction();
                     ft.replace(R.id.container_body, new Login());
                     ft.commit();
@@ -93,7 +93,7 @@ public class Home extends Fragment {
         Reclamation_btn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (pref.getString(Tag_token, "").equals("")){
+                if (pref.getString(conf.tag_token, "").equals("")){
                     FragmentTransaction ft = getFragmentManager().beginTransaction();
                     ft.replace(R.id.container_body, new Login());
                     ft.commit();
@@ -112,7 +112,7 @@ public class Home extends Fragment {
         Profile_btn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (pref.getString(Tag_token, "").equals("")){
+                if (pref.getString(conf.tag_token, "").equals("")){
                     FragmentTransaction ft = getFragmentManager().beginTransaction();
                     ft.replace(R.id.container_body, new Login());
                     ft.commit();
