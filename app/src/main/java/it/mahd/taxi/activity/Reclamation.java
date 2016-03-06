@@ -15,6 +15,7 @@ import android.widget.ListAdapter;
 import android.widget.ListView;
 import android.widget.SimpleAdapter;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import org.apache.http.NameValuePair;
 import org.apache.http.message.BasicNameValuePair;
@@ -77,38 +78,42 @@ public class Reclamation extends ListFragment implements SwipeRefreshLayout.OnRe
     }
 
     private void getAllReclamation() {
-        Refresh_swipe.setRefreshing(true);
-        List<NameValuePair> params = new ArrayList<NameValuePair>();
-        params.add(new BasicNameValuePair(conf.tag_token, pref.getString(conf.tag_token, "")));
-        ReclamationList = new ArrayList<HashMap<String, String>>();
-        JSONObject json = sr.getJSON(conf.url_getAllReclamation, params);
-        if(json != null){
-            try{
-                if(json.getBoolean("res")) {
-                    loads = json.getJSONArray("data");
-                    for (int i = 0; i < loads.length(); i++) {
-                        JSONObject c = loads.getJSONObject(i);
-                        String id = c.getString(conf.tag_id);
-                        String subject = c.getString(conf.tag_subject);
-                        String date = c.getString(conf.tag_date);
-                        Boolean status = c.getBoolean(conf.tag_status);
-                        HashMap<String, String> map = new HashMap<String, String>();
-                        map.put(conf.tag_id, id);
-                        map.put(conf.tag_subject, subject);
-                        map.put(conf.tag_date, date);
-                        map.put(conf.tag_status, (status) ? "Now" : "");
-                        ReclamationList.add(map);
+        if(conf.NetworkIsAvailable(getActivity())){
+            Refresh_swipe.setRefreshing(true);
+            List<NameValuePair> params = new ArrayList<NameValuePair>();
+            params.add(new BasicNameValuePair(conf.tag_token, pref.getString(conf.tag_token, "")));
+            ReclamationList = new ArrayList<HashMap<String, String>>();
+            JSONObject json = sr.getJSON(conf.url_getAllReclamation, params);
+            if(json != null){
+                try{
+                    if(json.getBoolean("res")) {
+                        loads = json.getJSONArray("data");
+                        for (int i = 0; i < loads.length(); i++) {
+                            JSONObject c = loads.getJSONObject(i);
+                            String id = c.getString(conf.tag_id);
+                            String subject = c.getString(conf.tag_subject);
+                            String date = c.getString(conf.tag_date);
+                            Boolean status = c.getBoolean(conf.tag_status);
+                            HashMap<String, String> map = new HashMap<String, String>();
+                            map.put(conf.tag_id, id);
+                            map.put(conf.tag_subject, subject);
+                            map.put(conf.tag_date, date);
+                            map.put(conf.tag_status, (status) ? "Now" : "");
+                            ReclamationList.add(map);
+                        }
                     }
+                } catch (JSONException e) {
+                    e.printStackTrace();
                 }
-            } catch (JSONException e) {
-                e.printStackTrace();
             }
+            ListAdapter adapter = new SimpleAdapter(getActivity(), ReclamationList, R.layout.reclamation_list,
+                    new String[] { conf.tag_subject, conf.tag_status, conf.tag_date, conf.tag_id },
+                    new int[] { R.id.subject_txt, R.id.status_txt, R.id.date_txt, R.id.idRec });
+            setListAdapter(adapter);
+            Refresh_swipe.setRefreshing(false);
+        }else{
+            Toast.makeText(getActivity(), R.string.networkunvalid, Toast.LENGTH_SHORT).show();
         }
-        ListAdapter adapter = new SimpleAdapter(getActivity(), ReclamationList, R.layout.reclamation_list,
-                new String[] { conf.tag_subject, conf.tag_status, conf.tag_date, conf.tag_id },
-                new int[] { R.id.subject_txt, R.id.status_txt, R.id.date_txt, R.id.idRec });
-        setListAdapter(adapter);
-        Refresh_swipe.setRefreshing(false);
     }
 
     public void onListItemClick(ListView l, View view, int position, long id){

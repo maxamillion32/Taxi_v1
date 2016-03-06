@@ -44,6 +44,8 @@
     <string name="fri">FRI</string>
     <string name="sat">SAT</string>
     <string name="sun">SUN</string>
+    <string name="networkunvalid">Network is unavailable!</string>
+    <string name="serverunvalid">Server is unavailable!</string>
 
     <string-array name="nav_drawer_labels">
         <item>@string/home</item>

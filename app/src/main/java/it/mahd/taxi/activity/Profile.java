@@ -41,12 +41,14 @@ public class Profile extends Fragment {
     SharedPreferences pref;
     ServerRequest sr = new ServerRequest();
     Controllers conf = new Controllers();
+    Encrypt algo = new Encrypt();
 
     private TextView Username_txt, City_txt, Age_txt, Email_txt, Phone_txt;
     private ImageView Picture_iv;
     private Button Logout_btn;
 
     private String fname, lname, gender, dateN, country, city, email, phone, picture;
+
 
     public Profile() {}
 
@@ -60,7 +62,61 @@ public class Profile extends Fragment {
         View rootView = inflater.inflate(R.layout.profile, container, false);
 
         pref = getActivity().getSharedPreferences("AppTaxi", Context.MODE_PRIVATE);
-        Encrypt algo = new Encrypt();
+
+        Username_txt = (TextView) rootView.findViewById(R.id.username_txt);
+        Username_txt.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+            }
+        });
+
+
+        Age_txt = (TextView) rootView.findViewById(R.id.age_txt);
+        Age_txt.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+            }
+        });
+
+        City_txt = (TextView) rootView.findViewById(R.id.city_txt);
+        City_txt.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+            }
+        });
+
+        Email_txt = (TextView) rootView.findViewById(R.id.email_txt);
+        Email_txt.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+            }
+        });
+
+        Phone_txt = (TextView) rootView.findViewById(R.id.phone_txt);
+        Phone_txt.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+            }
+        });
+
+        Picture_iv = (ImageView) rootView.findViewById(R.id.picture_iv);
+
+        Logout_btn = (Button) rootView.findViewById(R.id.logout_btn);
+        Logout_btn.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View view) {
+                if(conf.NetworkIsAvailable(getActivity())){
+                    logoutFunct();
+                }else{
+                    Toast.makeText(getActivity(), R.string.networkunvalid, Toast.LENGTH_SHORT).show();
+                }
+            }
+        });
+
+        if(conf.NetworkIsAvailable(getActivity())){
+            findUser();
+        }else{
+            Toast.makeText(getActivity(), R.string.networkunvalid, Toast.LENGTH_SHORT).show();
+        }
+
+        return rootView;
+    }
+
+    public void findUser() {
         List<NameValuePair> params = new ArrayList<NameValuePair>();
         params.add(new BasicNameValuePair(conf.tag_token, pref.getString(conf.tag_token, "")));
         JSONObject json = sr.getJSON(conf.url_profile, params);
@@ -78,88 +134,54 @@ public class Profile extends Fragment {
                     email = algo.enc2dec(json.getString(conf.tag_email), newKey);
                     phone = algo.enc2dec(json.getString(conf.tag_phone), newKey);
                     picture = json.getString(conf.tag_picture);
+                    Username_txt.setText(fname + " " + lname);
+                    int[] tab = new Calculator().getAge(dateN);
+                    Age_txt.setText(tab[0] + "years, " + tab[1] + "month, " + tab[2] + "day");
+                    City_txt.setText(gender + " from " + country + ", lives in " + city);
+                    Email_txt.setText(email);
+                    Phone_txt.setText(phone);
+                    byte[] imageAsBytes = Base64.decode(picture.getBytes(), Base64.DEFAULT);
+                    Picture_iv.setImageBitmap(BitmapFactory.decodeByteArray(imageAsBytes, 0, imageAsBytes.length));
                 }
             }catch (JSONException e) {
                 e.printStackTrace();
             }
+        } else {
+            Logout_btn.setVisibility(View.GONE);
+            Toast.makeText(getActivity(), R.string.serverunvalid, Toast.LENGTH_SHORT).show();
         }
+    }
 
-        Username_txt = (TextView) rootView.findViewById(R.id.username_txt);
-        Username_txt.setText(fname + " " + lname);
-        Username_txt.setOnClickListener(new View.OnClickListener() {
-            public void onClick(View v) {
-            }
-        });
+    public void logoutFunct() {
+        List<NameValuePair> params = new ArrayList<NameValuePair>();
+        params.add(new BasicNameValuePair(conf.tag_token, pref.getString(conf.tag_token, "")));
+        JSONObject json = sr.getJSON(conf.url_logout, params);
+        if(json != null){
+            try{
+                if(json.getBoolean("res")){
+                    SharedPreferences.Editor edit = pref.edit();
+                    edit.putString(conf.tag_token, "");
+                    edit.putString(conf.tag_fname, "");
+                    edit.putString(conf.tag_lname, "");
+                    edit.putString(conf.tag_picture, "");
+                    edit.commit();
 
-        int[] tab = new Calculator().getAge(dateN);
-        Age_txt = (TextView) rootView.findViewById(R.id.age_txt);
-        Age_txt.setText(tab[0] + "years, " + tab[1] + "month, " + tab[2] + "day");
-                Age_txt.setOnClickListener(new View.OnClickListener() {
-                    public void onClick(View v) {
-            }
-        });
+                    RelativeLayout rl = (RelativeLayout) getActivity().findViewById(R.id.nav_header_container);
+                    LayoutInflater inflater = (LayoutInflater) getActivity().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+                    View vi = inflater.inflate(R.layout.toolnav_drawer, null);
+                    TextView tv = (TextView) vi.findViewById(R.id.usernameTool_txt);
+                    tv.setText("");
+                    rl.addView(vi);
 
-        City_txt = (TextView) rootView.findViewById(R.id.city_txt);
-        City_txt.setText(gender + " from " + country + ", lives in " + city);
-        City_txt.setOnClickListener(new View.OnClickListener() {
-            public void onClick(View v) {
-            }
-        });
-
-        Email_txt = (TextView) rootView.findViewById(R.id.email_txt);
-        Email_txt.setText(email);
-        Email_txt.setOnClickListener(new View.OnClickListener() {
-            public void onClick(View v) {
-            }
-        });
-
-        Phone_txt = (TextView) rootView.findViewById(R.id.phone_txt);
-        Phone_txt.setText(phone);
-        Phone_txt.setOnClickListener(new View.OnClickListener() {
-            public void onClick(View v) {
-            }
-        });
-
-        Picture_iv = (ImageView) rootView.findViewById(R.id.picture_iv);
-        byte[] imageAsBytes = Base64.decode(picture.getBytes(), Base64.DEFAULT);
-        Picture_iv.setImageBitmap(BitmapFactory.decodeByteArray(imageAsBytes, 0, imageAsBytes.length));
-
-        Logout_btn = (Button) rootView.findViewById(R.id.logout_btn);
-        Logout_btn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                List<NameValuePair> params = new ArrayList<NameValuePair>();
-                params.add(new BasicNameValuePair(conf.tag_token, pref.getString(conf.tag_token, "")));
-                JSONObject json = sr.getJSON(conf.url_logout, params);
-                if(json != null){
-                    try{
-                        if(json.getBoolean("res")){
-                            SharedPreferences.Editor edit = pref.edit();
-                            edit.putString(conf.tag_token, "");
-                            edit.putString(conf.tag_fname, "");
-                            edit.putString(conf.tag_lname, "");
-                            edit.putString(conf.tag_picture, "");
-                            edit.commit();
-
-                            RelativeLayout rl = (RelativeLayout) getActivity().findViewById(R.id.nav_header_container);
-                            LayoutInflater inflater = (LayoutInflater) getActivity().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-                            View vi = inflater.inflate(R.layout.toolnav_drawer, null);
-                            TextView tv = (TextView) vi.findViewById(R.id.usernameTool_txt);
-                            tv.setText("");
-                            rl.addView(vi);
-
-                            FragmentTransaction ft = getFragmentManager().beginTransaction();
-                            ft.replace(R.id.container_body, new Home());
-                            ft.commit();
-                            ((Main) getActivity()).getSupportActionBar().setTitle(getString(R.string.home));
-                        }
-                    }catch(JSONException e){
-                        e.printStackTrace();
-                    }
+                    FragmentTransaction ft = getFragmentManager().beginTransaction();
+                    ft.replace(R.id.container_body, new Home());
+                    ft.commit();
+                    ((Main) getActivity()).getSupportActionBar().setTitle(getString(R.string.home));
                 }
+            }catch(JSONException e){
+                e.printStackTrace();
             }
-        });
-        return rootView;
+        }
     }
 
     @Override

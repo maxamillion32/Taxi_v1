@@ -53,7 +53,11 @@ public class ReclamationAdd extends Fragment {
         Send_btn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                submit();
+                if(conf.NetworkIsAvailable(getActivity())){
+                    submit();
+                }else{
+                    Toast.makeText(getActivity(), R.string.networkunvalid, Toast.LENGTH_SHORT).show();
+                }
             }
         });
         return rootView;

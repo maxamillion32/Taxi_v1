@@ -229,7 +229,7 @@ public class BookAdvance extends Fragment {
                 if(conf.NetworkIsAvailable(getActivity())){
                     submitForm();
                 }else{
-                    Toast.makeText(getActivity(), "Network is unavailable!", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getActivity(), R.string.networkunvalid, Toast.LENGTH_SHORT).show();
                 }
             }
         });

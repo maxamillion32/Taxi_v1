@@ -76,7 +76,11 @@ public class Login extends Fragment {
         Login_btn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                submitForm();
+                if(conf.NetworkIsAvailable(getActivity())){
+                    submitForm();
+                }else{
+                    Toast.makeText(getActivity(), R.string.networkunvalid, Toast.LENGTH_SHORT).show();
+                }
             }
         });
         SignUp_btn.setOnClickListener(new View.OnClickListener() {

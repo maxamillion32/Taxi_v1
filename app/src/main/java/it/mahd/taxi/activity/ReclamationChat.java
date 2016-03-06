@@ -15,6 +15,7 @@ import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.widget.EditText;
 import android.widget.ListView;
+import android.widget.Toast;
 
 import org.apache.http.NameValuePair;
 import org.apache.http.message.BasicNameValuePair;
@@ -82,32 +83,37 @@ public class ReclamationChat extends Fragment implements OnClickListener, SwipeR
     }
 
     private void getAllMsg() {
-        RefreshChat_swipe.setRefreshing(true);
-        chatlist = new ArrayList();
-        chatAdapter = new ChatAdapter(getActivity(), chatlist);
-        Message_lv.setAdapter(chatAdapter);
-        List<NameValuePair> params = new ArrayList<NameValuePair>();
-        params.add(new BasicNameValuePair(conf.tag_id, idRec));
-        JSONObject json = sr.getJSON(conf.url_getMessage, params);
-        if(json != null) {
-            try {
-                if (json.getBoolean("res")) {
-                    loads = json.getJSONArray("data");
-                    for (int i = 0; i < loads.length(); i++) {
-                        JSONObject c = loads.getJSONObject(i);
-                        Boolean sender = c.getBoolean(conf.tag_sender);
-                        String message = c.getString(conf.tag_message);
-                        String date = c.getString(conf.tag_date);
-                        final ChatMessage chatMessage = new ChatMessage(message, date, sender);
-                        chatAdapter.add(chatMessage);
-                        chatAdapter.notifyDataSetChanged();
+        if(conf.NetworkIsAvailable(getActivity())){
+            RefreshChat_swipe.setRefreshing(true);
+            chatlist = new ArrayList();
+            chatAdapter = new ChatAdapter(getActivity(), chatlist);
+            Message_lv.setAdapter(chatAdapter);
+            List<NameValuePair> params = new ArrayList<NameValuePair>();
+            params.add(new BasicNameValuePair(conf.tag_id, idRec));
+            JSONObject json = sr.getJSON(conf.url_getMessage, params);
+            if(json != null) {
+                try {
+                    if (json.getBoolean("res")) {
+                        loads = json.getJSONArray("data");
+                        for (int i = 0; i < loads.length(); i++) {
+                            JSONObject c = loads.getJSONObject(i);
+                            Boolean sender = c.getBoolean(conf.tag_sender);
+                            String message = c.getString(conf.tag_message);
+                            String date = c.getString(conf.tag_date);
+                            final ChatMessage chatMessage = new ChatMessage(message, date, sender);
+                            chatAdapter.add(chatMessage);
+                            chatAdapter.notifyDataSetChanged();
+                        }
                     }
+                }catch(JSONException e){
+                    e.printStackTrace();
                 }
-            }catch(JSONException e){
-                e.printStackTrace();
             }
+            RefreshChat_swipe.setRefreshing(false);
+        }else{
+            Toast.makeText(getActivity(), R.string.networkunvalid, Toast.LENGTH_SHORT).show();
         }
-        RefreshChat_swipe.setRefreshing(false);
+
     }
 
     @Override
@@ -146,7 +152,11 @@ public class ReclamationChat extends Fragment implements OnClickListener, SwipeR
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.send_btn:
-                sendTextMessage(v);
+                if(conf.NetworkIsAvailable(getActivity())){
+                    sendTextMessage(v);
+                }else{
+                    Toast.makeText(getActivity(), R.string.networkunvalid, Toast.LENGTH_SHORT).show();
+                }
         }
     }
 

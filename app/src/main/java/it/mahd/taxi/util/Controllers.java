@@ -8,6 +8,7 @@ import android.net.NetworkInfo;
  * Created by salem on 2/22/16.
  */
 public class Controllers {
+    //public static final String url = "http://10.0.2.2:4004";
     public static final String url = "http://10.0.2.2:4004";
     public static final String url_addReclamation = url + "/addReclamation";
     public static final String url_getAllReclamation = url + "/getAllReclamation";
