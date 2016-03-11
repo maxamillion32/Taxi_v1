@@ -287,7 +287,7 @@ public class SignUp extends Fragment {
                 e.printStackTrace();
             }
         }else{
-            Toast.makeText(getActivity(),"App server is unavailable!",Toast.LENGTH_LONG).show();
+            Toast.makeText(getActivity(), R.string.serverunvalid,Toast.LENGTH_LONG).show();
         }
     }
 

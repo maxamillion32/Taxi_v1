@@ -12,6 +12,11 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 
+import com.github.nkzawa.socketio.client.IO;
+import com.github.nkzawa.socketio.client.Socket;
+
+import java.net.URISyntaxException;
+
 import it.mahd.taxi.Main;
 import it.mahd.taxi.R;
 import it.mahd.taxi.model.FragmentDrawer;
@@ -27,11 +32,21 @@ public class Home extends Fragment {
     private Toolbar mToolbar;
     private FragmentDrawer drawerFragment;
 
+    private Socket socket;
+    {
+        try{
+            socket = IO.socket("http://10.0.2.2:4004");
+        }catch(URISyntaxException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
     public Home() {}
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        socket.connect();
     }
 
     @Override

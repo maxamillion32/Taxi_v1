@@ -20,7 +20,7 @@
 
         <meta-data
             android:name="com.google.android.maps.v2.API_KEY"
-            android:value="AIzaSyCzGrmlTfnYJ2QmCKh6YAd1rR9z6PYhjtU"/>
+            android:value="AIzaSyBqiq74gOLVaX-Oq6YAJrAdzfYaauO3bBM"/>
     </application>
 
     <uses-permission android:name="android.permission.INTERNET"/>
