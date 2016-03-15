@@ -62,7 +62,7 @@ public class Login extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.login, container, false);
 
-        pref = getActivity().getSharedPreferences("AppTaxi", Context.MODE_PRIVATE);
+        pref = getActivity().getSharedPreferences(conf.app, Context.MODE_PRIVATE);
         Email_input = (TextInputLayout) rootView.findViewById(R.id.input_email);
         Password_input = (TextInputLayout) rootView.findViewById(R.id.input_password);
         Email_etxt = (EditText) rootView.findViewById(R.id.email_etxt);

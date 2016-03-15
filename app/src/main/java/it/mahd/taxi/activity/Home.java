@@ -52,7 +52,7 @@ public class Home extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.home, container, false);
-        pref = getActivity().getSharedPreferences("AppTaxi", Context.MODE_PRIVATE);
+        pref = getActivity().getSharedPreferences(conf.app, Context.MODE_PRIVATE);
 
         Button Now_btn = (Button) rootView.findViewById(R.id.btn_now);
         Now_btn.setOnClickListener(new View.OnClickListener() {

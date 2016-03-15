@@ -19,6 +19,16 @@ import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
 
+import android.location.Location;
+import com.google.android.gms.common.ConnectionResult;
+import com.google.android.gms.common.GooglePlayServicesUtil;
+import com.google.android.gms.common.api.GoogleApiClient;
+import com.google.android.gms.common.api.GoogleApiClient.ConnectionCallbacks;
+import com.google.android.gms.common.api.GoogleApiClient.OnConnectionFailedListener;
+import com.google.android.gms.location.LocationListener;
+import com.google.android.gms.location.LocationRequest;
+import com.google.android.gms.location.LocationServices;
+
 import java.net.URISyntaxException;
 
 import it.mahd.taxi.Main;
@@ -33,8 +43,6 @@ public class BookNow extends Fragment {
     MapView mMapView;
     private GoogleMap googleMap;
     double latitude, longitude;
-
-
 
     public BookNow() {}
 
@@ -51,29 +59,25 @@ public class BookNow extends Fragment {
         mMapView.onResume();
 
         try {
-            MapsInitializer.initialize(getActivity().getApplicationContext());
+            MapsInitializer.initialize(getActivity());
         } catch (Exception e) {
             e.printStackTrace();
         }
 
         googleMap = mMapView.getMap();
         googleMap.setMyLocationEnabled(true);
-        gps = new GPSTracker(BookNow.this.getActivity());
+        gps = new GPSTracker(getActivity());
         if(gps.canGetLocation()){
             latitude = gps.getLatitude();
             longitude = gps.getLongitude();
-            Toast.makeText(getActivity(), "Your Location is - \nLat: " + latitude + "\nLong: " + longitude, Toast.LENGTH_LONG).show();
+            Toast.makeText(getActivity(), "Your Location is - \nLat: " + latitude + "\nLong: " + longitude, Toast.LENGTH_SHORT).show();
         }else{
-            gps.showSettingsAlert();
             latitude = 0;
             longitude = 0;
         }
-        MarkerOptions marker = new MarkerOptions().position(new LatLng(latitude, longitude)).title("Hello Maps");// create marker
+        /*MarkerOptions marker = new MarkerOptions().position(new LatLng(latitude, longitude)).title("Hello Maps");// create marker
         marker.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_ROSE));// Changing marker icon
-        googleMap.addMarker(marker);// adding marker
-        MarkerOptions x = new MarkerOptions().position(new LatLng(35.005, 10.005)).title("Hello Maps");
-        x.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_ROSE));
-        googleMap.addMarker(x);
+        googleMap.addMarker(marker);// adding marker*/
         CameraPosition cameraPosition = new CameraPosition.Builder().target(new LatLng(latitude, longitude)).zoom(15).build();
         googleMap.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition));
         return v;

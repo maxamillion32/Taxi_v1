@@ -14,12 +14,14 @@ import android.view.ViewGroup;
 
 import it.mahd.taxi.Main;
 import it.mahd.taxi.R;
+import it.mahd.taxi.util.Controllers;
 
 /**
  * Created by salem on 2/14/16.
  */
 public class Settings extends Fragment {
     SharedPreferences pref;
+    Controllers conf = new Controllers();
 
     public Settings() {}
 
@@ -32,7 +34,7 @@ public class Settings extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.settings, container, false);
 
-        pref = getActivity().getSharedPreferences("AppTaxi", Context.MODE_PRIVATE);
+        pref = getActivity().getSharedPreferences(conf.app, Context.MODE_PRIVATE);
         return rootView;
     }
 

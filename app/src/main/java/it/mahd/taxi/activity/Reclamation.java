@@ -48,7 +48,7 @@ public class Reclamation extends ListFragment implements SwipeRefreshLayout.OnRe
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.reclamation, container, false);
 
-        pref = getActivity().getSharedPreferences("AppTaxi", Context.MODE_PRIVATE);
+        pref = getActivity().getSharedPreferences(conf.app, Context.MODE_PRIVATE);
         Refresh_swipe = (SwipeRefreshLayout) rootView.findViewById(R.id.refresh_swipe);
         Refresh_swipe.setOnRefreshListener(this);
         Refresh_swipe.post(new Runnable() {

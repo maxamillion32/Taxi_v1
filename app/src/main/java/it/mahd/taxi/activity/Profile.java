@@ -61,7 +61,7 @@ public class Profile extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.profile, container, false);
 
-        pref = getActivity().getSharedPreferences("AppTaxi", Context.MODE_PRIVATE);
+        pref = getActivity().getSharedPreferences(conf.app, Context.MODE_PRIVATE);
 
         Username_txt = (TextView) rootView.findViewById(R.id.username_txt);
         Username_txt.setOnClickListener(new View.OnClickListener() {

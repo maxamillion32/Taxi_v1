@@ -44,7 +44,7 @@ public class ReclamationAdd extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.reclamation_add, container, false);
 
-        pref = getActivity().getSharedPreferences("AppTaxi", Context.MODE_PRIVATE);
+        pref = getActivity().getSharedPreferences(conf.app, Context.MODE_PRIVATE);
         Subject_input = (TextInputLayout) rootView.findViewById(R.id.input_subject);
         Subject_etxt = (EditText) rootView.findViewById(R.id.subject_etxt);
         Msg_input = (TextInputLayout) rootView.findViewById(R.id.input_msg);

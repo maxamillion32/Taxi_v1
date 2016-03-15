@@ -12,6 +12,7 @@ import android.os.Bundle;
 import android.os.IBinder;
 import android.provider.Settings;
 import android.util.Log;
+import android.widget.Toast;
 
 /**
  * Created by salem on 2/13/16.
@@ -24,8 +25,8 @@ public class GPSTracker extends Service implements LocationListener {
     Location location; // location
     double latitude; // latitude
     double longitude; // longitude
-    private static final long MIN_DISTANCE_CHANGE_FOR_UPDATES = 10;// The minimum distance to change Updates in meters // 10 meters
-    private static final long MIN_TIME_BW_UPDATES = 1000 * 60 * 1;// The minimum time between updates in milliseconds // 1 minute
+    private static final long MIN_DISTANCE_CHANGE_FOR_UPDATES = 3;// The minimum distance to change Updates in meters // 3 meters
+    private static final long MIN_TIME_BW_UPDATES = 1000 * 3 * 1;// The minimum time between updates in milliseconds // 3 seconds
     protected LocationManager locationManager;// Declaring a Location Manager
 
     public GPSTracker(Context context) {
@@ -41,14 +42,14 @@ public class GPSTracker extends Service implements LocationListener {
 
             isNetworkEnabled = locationManager.isProviderEnabled(LocationManager.NETWORK_PROVIDER);// getting network status
 
-            if (!isGPSEnabled && !isNetworkEnabled) {// no network provider is enabled
+            if (!isGPSEnabled) {// no GPS provider is enabled
+                showSettingsAlert();
             } else {
                 this.canGetLocation = true;
                 if (isNetworkEnabled) {// First get location from Network Provider
                     locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER,
                             MIN_TIME_BW_UPDATES,
                             MIN_DISTANCE_CHANGE_FOR_UPDATES, this);
-                    Log.d("Network", "Network");
                     if (locationManager != null) {
                         location = locationManager.getLastKnownLocation(LocationManager.NETWORK_PROVIDER);
                         if (location != null) {
@@ -63,7 +64,6 @@ public class GPSTracker extends Service implements LocationListener {
                                 LocationManager.GPS_PROVIDER,
                                 MIN_TIME_BW_UPDATES,
                                 MIN_DISTANCE_CHANGE_FOR_UPDATES, this);
-                        Log.d("GPS Enabled", "GPS Enabled");
                         if (locationManager != null) {
                             location = locationManager
                                     .getLastKnownLocation(LocationManager.GPS_PROVIDER);
@@ -107,30 +107,32 @@ public class GPSTracker extends Service implements LocationListener {
     }
 
     public void showSettingsAlert(){//Function to show settings alert dialog & On pressing Settings button will lauch Settings Options
-        AlertDialog.Builder alertDialog = new AlertDialog.Builder(mContext);
-        alertDialog.setTitle("GPS is settings");// Setting Dialog Title
-        alertDialog.setMessage("GPS is not enabled. Do you want to go to settings menu?");// Setting Dialog Message
-
-        alertDialog.setPositiveButton("Settings", new DialogInterface.OnClickListener() {// On pressing Settings button
-            public void onClick(DialogInterface dialog,int which) {
-                Intent intent = new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS);
-                mContext.startActivity(intent);
-            }
-        });
-
-        alertDialog.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
-            public void onClick(DialogInterface dialog, int which) {// on pressing cancel button
-                dialog.cancel();
-            }
-        });
-
-        alertDialog.show();// Showing Alert Message
+        final AlertDialog.Builder builder =  new AlertDialog.Builder(mContext);
+        final String action = Settings.ACTION_LOCATION_SOURCE_SETTINGS;
+        final String title = "GPS is settings";// Setting Dialog Title
+        final String message = "GPS is not enabled. Do you want open GPS setting?";// Setting Dialog Message
+        builder.setTitle(title).setMessage(message)
+                .setPositiveButton("OK",
+                        new DialogInterface.OnClickListener() {// On pressing Settings button
+                            public void onClick(DialogInterface d, int id) {
+                                mContext.startActivity(new Intent(action));
+                                d.dismiss();
+                            }
+                        })
+                .setNegativeButton("Cancel",
+                        new DialogInterface.OnClickListener() {// on pressing cancel button
+                            public void onClick(DialogInterface d, int id) {
+                                d.cancel();
+                            }
+                        });
+        builder.create().show();// Showing Alert Message
     }
 
     @Override
     public void onLocationChanged(Location location) {
         latitude = location.getLatitude();
         longitude = location.getLongitude();
+        Toast.makeText(mContext, latitude + " " + longitude, Toast.LENGTH_SHORT).show();
     }
 
     @Override

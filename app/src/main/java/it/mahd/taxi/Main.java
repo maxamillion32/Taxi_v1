@@ -19,6 +19,8 @@ import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import com.github.nkzawa.socketio.client.Socket;
+
 import it.mahd.taxi.activity.BookAdvance;
 import it.mahd.taxi.activity.BookNow;
 import it.mahd.taxi.activity.Home;
@@ -29,25 +31,24 @@ import it.mahd.taxi.activity.Settings;
 import it.mahd.taxi.model.FragmentDrawer;
 import it.mahd.taxi.util.Controllers;
 import it.mahd.taxi.util.ServerRequest;
+import it.mahd.taxi.util.SocketIO;
 
 public class Main extends AppCompatActivity implements FragmentDrawer.FragmentDrawerListener {
     SharedPreferences pref;
     ServerRequest sr = new ServerRequest();
     Controllers conf = new Controllers();
+    Socket socket = SocketIO.getInstance();
 
     public Toolbar mToolbar;
     private FragmentDrawer drawerFragment;
-    //private static String TAG = Main.class.getSimpleName();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.main);
+        pref = getSharedPreferences(conf.app, MODE_PRIVATE);
+        socket.connect();
 
-        pref = getSharedPreferences("AppTaxi", MODE_PRIVATE);
-        /*SharedPreferences.Editor edit = pref.edit();
-        edit.putString(Tag_url, url);
-        edit.commit();*/
         mToolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(mToolbar);
         getSupportActionBar().setDisplayShowHomeEnabled(true);

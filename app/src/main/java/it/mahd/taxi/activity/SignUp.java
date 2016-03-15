@@ -103,7 +103,7 @@ public class SignUp extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.signup, container, false);
 
-        pref = getActivity().getSharedPreferences("AppTaxi", Context.MODE_PRIVATE);
+        pref = getActivity().getSharedPreferences(conf.app, Context.MODE_PRIVATE);
         Fname_input = (TextInputLayout) rootView.findViewById(R.id.input_fname);
         Fname_etxt = (EditText) rootView.findViewById(R.id.fname_etxt);
         Lname_input = (TextInputLayout) rootView.findViewById(R.id.input_lname);
