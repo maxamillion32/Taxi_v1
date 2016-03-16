@@ -37,7 +37,7 @@ public class Main extends AppCompatActivity implements FragmentDrawer.FragmentDr
     SharedPreferences pref;
     ServerRequest sr = new ServerRequest();
     Controllers conf = new Controllers();
-    Socket socket = SocketIO.getInstance();
+    //Socket socket = SocketIO.getInstance();
 
     public Toolbar mToolbar;
     private FragmentDrawer drawerFragment;
@@ -47,7 +47,7 @@ public class Main extends AppCompatActivity implements FragmentDrawer.FragmentDr
         super.onCreate(savedInstanceState);
         setContentView(R.layout.main);
         pref = getSharedPreferences(conf.app, MODE_PRIVATE);
-        socket.connect();
+        //socket.connect();
 
         mToolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(mToolbar);
