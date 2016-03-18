@@ -117,7 +117,12 @@ public class Profile extends Fragment {
     }
 
     public void findUser() {
+        Encrypt algo = new Encrypt();
+        int x = algo.keyVirtual();
+        String key = algo.key(x);
         List<NameValuePair> params = new ArrayList<NameValuePair>();
+        params.add(new BasicNameValuePair("app", algo.dec2enc(conf.app, key)));
+        params.add(new BasicNameValuePair(conf.tag_key, x + ""));
         params.add(new BasicNameValuePair(conf.tag_token, pref.getString(conf.tag_token, "")));
         JSONObject json = sr.getJSON(conf.url_profile, params);
         if(json != null){
@@ -153,7 +158,12 @@ public class Profile extends Fragment {
     }
 
     public void logoutFunct() {
+        Encrypt algo = new Encrypt();
+        int x = algo.keyVirtual();
+        String key = algo.key(x);
         List<NameValuePair> params = new ArrayList<NameValuePair>();
+        params.add(new BasicNameValuePair("app", algo.dec2enc(conf.app, key)));
+        params.add(new BasicNameValuePair(conf.tag_key, x + ""));
         params.add(new BasicNameValuePair(conf.tag_token, pref.getString(conf.tag_token, "")));
         JSONObject json = sr.getJSON(conf.url_logout, params);
         if(json != null){

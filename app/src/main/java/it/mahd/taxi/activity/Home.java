@@ -84,7 +84,7 @@ public class Home extends Fragment {
         Advance_btn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (pref.getString(conf.tag_token, "").equals("")){
+                /*if (pref.getString(conf.tag_token, "").equals("")){
                     FragmentTransaction ft = getFragmentManager().beginTransaction();
                     ft.replace(R.id.container_body, new Login());
                     ft.commit();
@@ -100,7 +100,17 @@ public class Home extends Fragment {
                     ft.addToBackStack(null);
                     ft.commit();
                     ((Main) getActivity()).getSupportActionBar().setTitle(getString(R.string.advance));
-                }
+                }*/
+                Fragment fr = new BookAdvance();
+                FragmentTransaction ft = getFragmentManager().beginTransaction();
+                Bundle args = new Bundle();
+                args.putDouble(conf.tag_latitude, 0);
+                args.putDouble(conf.tag_longitude, 0);
+                fr.setArguments(args);
+                ft.replace(R.id.container_body, fr);
+                ft.addToBackStack(null);
+                ft.commit();
+                ((Main) getActivity()).getSupportActionBar().setTitle(getString(R.string.advance));
             }
         });
 

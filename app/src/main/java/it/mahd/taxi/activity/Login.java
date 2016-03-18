@@ -108,6 +108,7 @@ public class Login extends Fragment {
         int x = algo.keyVirtual();
         String key = algo.key(x);
         List<NameValuePair> params = new ArrayList<NameValuePair>();
+        params.add(new BasicNameValuePair("app", algo.dec2enc(conf.app, key)));
         params.add(new BasicNameValuePair(conf.tag_email, algo.dec2enc(Email_etxt.getText().toString(), key)));
         params.add(new BasicNameValuePair(conf.tag_password, algo.dec2enc(Password_etxt.getText().toString(), key)));
         params.add(new BasicNameValuePair(conf.tag_key, x + ""));

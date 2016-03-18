@@ -1,6 +1,12 @@
 package it.mahd.taxi.activity;
 
+import android.app.AlertDialog;
+import android.app.Service;
+import android.content.DialogInterface;
+import android.content.Intent;
 import android.graphics.Point;
+import android.location.Location;
+import android.location.LocationManager;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.SystemClock;
@@ -13,6 +19,7 @@ import android.view.animation.Interpolator;
 import android.view.animation.LinearInterpolator;
 import android.widget.Toast;
 
+import com.google.android.gms.maps.CameraUpdate;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap.OnMapClickListener;
@@ -39,17 +46,27 @@ import com.google.android.gms.maps.model.MarkerOptions;
 import it.mahd.taxi.Main;
 import it.mahd.taxi.R;
 import it.mahd.taxi.util.Controllers;
-import it.mahd.taxi.util.GPSTracker;
 
 /**
  * Created by salem on 3/2/16.
  */
 public class BookAdvancePosition extends Fragment {
     Controllers conf = new Controllers();
-    GPSTracker gps;
+    //GPSTracker gps;
     MapView mMapView;
     private GoogleMap googleMap;
-    double latitude, longitude;
+    Service service;
+    protected LocationManager locationManager;// Declaring a Location Manager
+    Location location; // location
+    private CameraPosition cameraPosition;
+    private double latitude, longitude;
+    private Boolean isStart = false;
+    boolean isGPSEnabled = false;// flag for GPS status
+    boolean isNetworkEnabled = false;// flag for network status
+    boolean canGetLocation = false;// flag for GPS status
+    private static final long MIN_DISTANCE_CHANGE_FOR_UPDATES = 3;// The minimum distance to change Updates in meters // 3 meters
+    private static final long MIN_TIME_BW_UPDATES = 1000 * 3 * 1;// The minimum time between updates in milliseconds // 3 seconds
+
 
     public BookAdvancePosition() {}
 
@@ -71,30 +88,21 @@ public class BookAdvancePosition extends Fragment {
         } catch (Exception e) {
             e.printStackTrace();
         }
-        //mMapView.setBuiltInZoomControls(true);
+
         googleMap = mMapView.getMap();
         googleMap.getUiSettings().setZoomControlsEnabled(true);
-        googleMap.setMyLocationEnabled(true);
-        /*googleMap.setOnMarkerDragListener(this);
-        googleMap.setOnMapLongClickListener(this);
-        googleMap.setOnMapClickListener(this);*/
-        gps = new GPSTracker(BookAdvancePosition.this.getActivity());
-        if(gps.canGetLocation()){
-            latitude = gps.getLatitude();
-            longitude = gps.getLongitude();
-            Toast.makeText(getActivity(), "Your Location is - \nLat: " + latitude + "\nLong: " + longitude, Toast.LENGTH_LONG).show();
+        getLocation();
+        if(canGetLocation()){
+            latitude = getLatitude();
+            longitude = getLongitude();
         }else{
-            gps.showSettingsAlert();
             latitude = 0;
             longitude = 0;
         }
-        /*MarkerOptions marker = new MarkerOptions().position(new LatLng(latitude, longitude)).title("Hello Maps");// create marker
-        marker.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_ROSE));// Changing marker icon
-        googleMap.addMarker(marker);// adding marker*/
-        MarkerOptions x = new MarkerOptions().position(new LatLng(35.005, 10.005)).title("Hello Maps").snippet("First Marker");
-        x.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_ROSE));
+        MarkerOptions x = new MarkerOptions().position(new LatLng(latitude, longitude)).title("Hello Maps").snippet("First Marker");
+        x.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_RED));
         googleMap.addMarker(x);
-        CameraPosition cameraPosition = new CameraPosition.Builder().target(new LatLng(35.005, 10.005)).zoom(10).build();
+        cameraPosition = new CameraPosition.Builder().target(new LatLng(latitude, longitude)).zoom(10).build();
         googleMap.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition));
         googleMap.setOnMarkerClickListener(new GoogleMap.OnMarkerClickListener() {
             public boolean onMarkerClick(Marker arg0) {
@@ -112,10 +120,94 @@ public class BookAdvancePosition extends Fragment {
                 longitude = arg0.longitude;
                 googleMap.addMarker(new MarkerOptions().position(arg0)
                         .title("Hello Maps").snippet("First Marker")
-                        .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_ROSE)));
+                        .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_RED)));
             }
         });
         return v;
+    }
+
+    public Location getLocation() {
+        try {
+            locationManager = (LocationManager) getActivity().getSystemService(service.LOCATION_SERVICE);
+            isGPSEnabled = locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER);// getting GPS status
+            isNetworkEnabled = locationManager.isProviderEnabled(LocationManager.NETWORK_PROVIDER);// getting network status
+
+            if (!isGPSEnabled) {// no GPS provider is enabled
+                showSettingsAlert();
+            } else {
+                this.canGetLocation = true;
+                if (isNetworkEnabled) {// First get location from Network Provider
+                    if (locationManager != null) {
+                        location = locationManager.getLastKnownLocation(LocationManager.NETWORK_PROVIDER);
+                        if (location != null) {
+                            latitude = location.getLatitude();
+                            longitude = location.getLongitude();
+                        }
+                    }
+                }
+                if (isGPSEnabled) {// if GPS Enabled get lat/long using GPS Services
+                    if (location == null) {
+                        if (locationManager != null) {
+                            location = locationManager
+                                    .getLastKnownLocation(LocationManager.GPS_PROVIDER);
+                            if (location != null) {
+                                latitude = location.getLatitude();
+                                longitude = location.getLongitude();
+                            }
+                        }
+                    }
+                }
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return location;
+    }
+
+    public void stopUsingGPS(){//Stop using GPS listener & Calling this function will stop using GPS in your app
+        if(locationManager != null){
+            locationManager = null;
+        }
+    }
+
+    public double getLatitude(){//Function to get latitude
+        if(location != null){
+            latitude = location.getLatitude();
+        }
+        return latitude;
+    }
+
+    public double getLongitude(){//Function to get longitude
+        if(location != null){
+            longitude = location.getLongitude();
+        }
+        return longitude;
+    }
+    //Function to check GPS/wifi enabled
+    public boolean canGetLocation() {
+        return this.canGetLocation;
+    }
+
+    public void showSettingsAlert(){//Function to show settings alert dialog & On pressing Settings button will lauch Settings Options
+        final AlertDialog.Builder builder =  new AlertDialog.Builder(getActivity());
+        final String action = android.provider.Settings.ACTION_LOCATION_SOURCE_SETTINGS;
+        final String title = "GPS is settings";// Setting Dialog Title
+        final String message = "GPS is not enabled. Do you want open GPS setting?";// Setting Dialog Message
+        builder.setTitle(title).setMessage(message)
+                .setPositiveButton("OK",
+                        new DialogInterface.OnClickListener() {// On pressing Settings button
+                            public void onClick(DialogInterface d, int id) {
+                                getActivity().startActivity(new Intent(action));
+                                d.dismiss();
+                            }
+                        })
+                .setNegativeButton("Cancel",
+                        new DialogInterface.OnClickListener() {// on pressing cancel button
+                            public void onClick(DialogInterface d, int id) {
+                                d.cancel();
+                            }
+                        });
+        builder.create().show();// Showing Alert Message
     }
 
     @Override
@@ -134,6 +226,7 @@ public class BookAdvancePosition extends Fragment {
     public void onDestroy() {
         super.onDestroy();
         mMapView.onDestroy();
+        stopUsingGPS();
         Fragment fr = new BookAdvance();
         FragmentTransaction ft = getFragmentManager().beginTransaction();
         Bundle args = new Bundle();

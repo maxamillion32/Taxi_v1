@@ -29,15 +29,18 @@ import com.google.android.gms.maps.MapsInitializer;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.util.ArrayList;
+
 import it.mahd.taxi.Main;
 import it.mahd.taxi.R;
+import it.mahd.taxi.database.TaxiPosition;
 import it.mahd.taxi.util.Controllers;
-import it.mahd.taxi.util.GPSTracker;
 import it.mahd.taxi.util.SocketIO;
 
 /**
@@ -47,7 +50,9 @@ public class BookNow extends Fragment implements LocationListener {
     SharedPreferences pref;
     Controllers conf = new Controllers();
     Socket socket = SocketIO.getInstance();
+    ArrayList<TaxiPosition> listTaxi = new ArrayList<>();
 
+    //MarkerOptions marker = new MarkerOptions();
     MapView mMapView;
     Service service;
     private GoogleMap googleMap;
@@ -119,12 +124,40 @@ public class BookNow extends Fragment implements LocationListener {
                         lat = data.getDouble(conf.tag_latitude);
                         lon = data.getDouble(conf.tag_longitude);
                         token = data.getString(conf.tag_token);
-                        MarkerOptions marker = new MarkerOptions().position(new LatLng(lat, lon)).title("Hello Maps");// create marker
+                        if (listTaxi.isEmpty()) {
+                            MarkerOptions a = new MarkerOptions().position(new LatLng(lat, lon))
+                                    .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_RED));
+                            Marker m = googleMap.addMarker(a);
+                            TaxiPosition t = new TaxiPosition(token, lat, lon, m);
+                            listTaxi.add(t);
+                        } else {
+                            boolean existTaxi = false;
+                            int position = 0;
+                            for (int i = 0; i < listTaxi.size(); i++) {
+                                if (token.equals(listTaxi.get(i).getToken())) {
+                                    existTaxi = true;
+                                    position = i;
+                                    break;
+                                } else {
+                                    existTaxi = false;
+                                }
+                            }
+                            if (existTaxi) {
+                                listTaxi.get(position).getMarker().setPosition(new LatLng(lat, lon));
+                                listTaxi.get(position).setLatitude(lat);
+                                listTaxi.get(position).setLongitude(lon);
+                            } else {
+                                MarkerOptions a = new MarkerOptions().position(new LatLng(lat, lon))
+                                        .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_RED));
+                                Marker m = googleMap.addMarker(a);
+                                TaxiPosition t = new TaxiPosition(token, lat, lon, m);
+                                listTaxi.add(t);
+                            }
+                        }
+                        /*marker.position(new LatLng(lat, lon)).title("Hello Maps");// create marker
                         marker.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_RED));// Changing marker icon
-                        googleMap.addMarker(marker);// adding marker
-                    } catch (JSONException e) {
-                        // return;
-                    }
+                        googleMap.addMarker(marker);// adding marker*/
+                    } catch (JSONException e) { }
                 }
             });
         }
