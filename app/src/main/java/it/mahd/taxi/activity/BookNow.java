@@ -81,7 +81,7 @@ public class BookNow extends Fragment implements LocationListener {
         View v = inflater.inflate(R.layout.booknow, container, false);
         pref = getActivity().getSharedPreferences(conf.app, Context.MODE_PRIVATE);
         socket.connect();
-        socket.on(conf.tag_gps, handleIncomingMessages);
+        socket.on(conf.tag_gps, handleIncomingMessages);//listen in taxi driver
 
         mMapView = (MapView) v.findViewById(R.id.mapView);
         mMapView.onCreate(savedInstanceState);
@@ -119,44 +119,58 @@ public class BookNow extends Fragment implements LocationListener {
                 public void run() {
                     JSONObject data = (JSONObject) args[0];
                     Double lat, lon;
-                    String token;
+                    String token, socket;
+                    Boolean working;
                     try {
                         lat = data.getDouble(conf.tag_latitude);
                         lon = data.getDouble(conf.tag_longitude);
                         token = data.getString(conf.tag_token);
-                        if (listTaxi.isEmpty()) {
-                            MarkerOptions a = new MarkerOptions().position(new LatLng(lat, lon))
-                                    .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_RED));
-                            Marker m = googleMap.addMarker(a);
-                            TaxiPosition t = new TaxiPosition(token, lat, lon, m);
-                            listTaxi.add(t);
-                        } else {
-                            boolean existTaxi = false;
-                            int position = 0;
-                            for (int i = 0; i < listTaxi.size(); i++) {
-                                if (token.equals(listTaxi.get(i).getToken())) {
-                                    existTaxi = true;
-                                    position = i;
-                                    break;
-                                } else {
-                                    existTaxi = false;
-                                }
-                            }
-                            if (existTaxi) {
-                                listTaxi.get(position).getMarker().setPosition(new LatLng(lat, lon));
-                                listTaxi.get(position).setLatitude(lat);
-                                listTaxi.get(position).setLongitude(lon);
-                            } else {
+                        socket = data.getString(conf.tag_socket);
+                        working = data.getBoolean(conf.tag_working);
+                        if (working) {
+                            if (listTaxi.isEmpty()) {
                                 MarkerOptions a = new MarkerOptions().position(new LatLng(lat, lon))
                                         .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_RED));
                                 Marker m = googleMap.addMarker(a);
-                                TaxiPosition t = new TaxiPosition(token, lat, lon, m);
+                                TaxiPosition t = new TaxiPosition(token, socket, lat, lon, m);
                                 listTaxi.add(t);
+                            } else {
+                                boolean existTaxi = false;
+                                int position = 0;
+                                for (int i = 0; i < listTaxi.size(); i++) {
+                                    if (socket.equals(listTaxi.get(i).getSocket())) {
+                                        existTaxi = true;
+                                        position = i;
+                                        break;
+                                    } else {
+                                        existTaxi = false;
+                                    }
+                                }
+                                if (existTaxi) {
+                                    listTaxi.get(position).getMarker().setPosition(new LatLng(lat, lon));
+                                    listTaxi.get(position).setLatitude(lat);
+                                    listTaxi.get(position).setLongitude(lon);
+                                } else {
+                                    MarkerOptions a = new MarkerOptions().position(new LatLng(lat, lon))
+                                            .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_RED));
+                                    Marker m = googleMap.addMarker(a);
+                                    TaxiPosition t = new TaxiPosition(token, socket, lat, lon, m);
+                                    listTaxi.add(t);
+                                }
+                            }
+                        } else {
+                            Toast.makeText(getActivity(),"not working",Toast.LENGTH_SHORT).show();
+                            if (!listTaxi.isEmpty()) {
+                                Toast.makeText(getActivity(),"not empty list",Toast.LENGTH_SHORT).show();
+                                for (int i = 0; i < listTaxi.size(); i++) {
+                                    if (socket.equals(listTaxi.get(i).getSocket())) {
+                                        listTaxi.get(i).getMarker().remove();
+                                        listTaxi.remove(i);
+                                        break;
+                                    }
+                                }
                             }
                         }
-                        /*marker.position(new LatLng(lat, lon)).title("Hello Maps");// create marker
-                        marker.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_RED));// Changing marker icon
-                        googleMap.addMarker(marker);// adding marker*/
                     } catch (JSONException e) { }
                 }
             });
@@ -305,6 +319,7 @@ public class BookNow extends Fragment implements LocationListener {
     public void onDestroy() {
         super.onDestroy();
         stopUsingGPS();
+        socket.disconnect();
         mMapView.onDestroy();
         FragmentTransaction ft = getFragmentManager().beginTransaction();
         ft.replace(R.id.container_body, new Home());
