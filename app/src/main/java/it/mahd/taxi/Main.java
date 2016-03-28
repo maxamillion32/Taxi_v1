@@ -2,7 +2,10 @@ package it.mahd.taxi;
 
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.drawable.BitmapDrawable;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
@@ -28,6 +31,7 @@ import it.mahd.taxi.activity.Login;
 import it.mahd.taxi.activity.Profile;
 import it.mahd.taxi.activity.Reclamation;
 import it.mahd.taxi.activity.Settings;
+import it.mahd.taxi.database.Notify;
 import it.mahd.taxi.model.FragmentDrawer;
 import it.mahd.taxi.util.Controllers;
 import it.mahd.taxi.util.ServerRequest;
@@ -37,7 +41,6 @@ public class Main extends AppCompatActivity implements FragmentDrawer.FragmentDr
     SharedPreferences pref;
     ServerRequest sr = new ServerRequest();
     Controllers conf = new Controllers();
-    //Socket socket = SocketIO.getInstance();
 
     public Toolbar mToolbar;
     private FragmentDrawer drawerFragment;
@@ -47,7 +50,6 @@ public class Main extends AppCompatActivity implements FragmentDrawer.FragmentDr
         super.onCreate(savedInstanceState);
         setContentView(R.layout.main);
         pref = getSharedPreferences(conf.app, MODE_PRIVATE);
-        //socket.connect();
 
         mToolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(mToolbar);
@@ -72,16 +74,43 @@ public class Main extends AppCompatActivity implements FragmentDrawer.FragmentDr
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.menu, menu);
+        MenuItem menuItem = menu.findItem(R.id.action_notify);
+        menuItem.setIcon(buildCounterDrawable(5, R.mipmap.ic_notify));
         return true;
+    }
+
+    private Drawable buildCounterDrawable(int count, int backgroundImageId) {
+        LayoutInflater inflater = LayoutInflater.from(this);
+        View view = inflater.inflate(R.layout.notify_count, null);
+        view.setBackgroundResource(backgroundImageId);
+
+        if (count == 0) {
+            View counterTextPanel = view.findViewById(R.id.counterValuePanel);
+            counterTextPanel.setVisibility(View.GONE);
+        } else {
+            TextView textView = (TextView) view.findViewById(R.id.count);
+            textView.setText("" + count);
+        }
+
+        view.measure(
+                View.MeasureSpec.makeMeasureSpec(0, View.MeasureSpec.UNSPECIFIED),
+                View.MeasureSpec.makeMeasureSpec(0, View.MeasureSpec.UNSPECIFIED));
+        view.layout(0, 0, view.getMeasuredWidth(), view.getMeasuredHeight());
+
+        view.setDrawingCacheEnabled(true);
+        view.setDrawingCacheQuality(View.DRAWING_CACHE_QUALITY_HIGH);
+        Bitmap bitmap = Bitmap.createBitmap(view.getDrawingCache());
+        view.setDrawingCacheEnabled(false);
+
+        return new BitmapDrawable(getResources(), bitmap);
     }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         int id = item.getItemId();
-        /*if(id == R.id.action_notify){
-            Toast.makeText(getApplicationContext(), "Search action is selected!", Toast.LENGTH_SHORT).show();
+        if(id == R.id.action_notify){
             return true;
-        }*/
+        }
         if (id == R.id.action_settings) {
             displayView(5);
             return true;

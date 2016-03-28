@@ -46,6 +46,8 @@
     <string name="sun">SUN</string>
     <string name="networkunvalid">Network is unavailable!</string>
     <string name="serverunvalid">Server is unavailable!</string>
+    <string name="book">Book</string>
+    <string name="cancel">Cancel</string>
 
     <string-array name="nav_drawer_labels">
         <item>@string/home</item>

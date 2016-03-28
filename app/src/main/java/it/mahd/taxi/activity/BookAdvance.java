@@ -62,14 +62,6 @@ public class BookAdvance extends Fragment {
     private double latitude, longitude = 0;
     private boolean Repeat, Mon, Tue, Wed, Thu, Fri, Sat, Sun;
 
-    /*private Socket socket;
-    {
-        try{
-            socket = IO.socket("http://10.0.2.2:4004");
-        }catch(URISyntaxException e) {
-            throw new RuntimeException(e);
-        }
-    }*/
     public BookAdvance() {}
 
     @Override
@@ -80,7 +72,6 @@ public class BookAdvance extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.bookadvance, container, false);
-        //socket.connect();
         latitude = getArguments().getDouble(conf.tag_latitude);
         longitude = getArguments().getDouble(conf.tag_longitude);
 

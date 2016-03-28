@@ -1,11 +1,14 @@
 package it.mahd.taxi.activity;
 
 import android.app.AlertDialog;
+import android.app.Dialog;
 import android.app.Service;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.graphics.BitmapFactory;
+import android.graphics.Color;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
@@ -14,9 +17,14 @@ import android.os.IBinder;
 import android.provider.*;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
+import android.util.Base64;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
+import android.widget.ImageView;
+import android.widget.RelativeLayout;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.github.nkzawa.emitter.Emitter;
@@ -32,15 +40,21 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 
+import org.apache.http.NameValuePair;
+import org.apache.http.message.BasicNameValuePair;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import it.mahd.taxi.Main;
 import it.mahd.taxi.R;
 import it.mahd.taxi.database.TaxiPosition;
+import it.mahd.taxi.util.Calculator;
 import it.mahd.taxi.util.Controllers;
+import it.mahd.taxi.util.Encrypt;
+import it.mahd.taxi.util.ServerRequest;
 import it.mahd.taxi.util.SocketIO;
 
 /**
@@ -49,12 +63,13 @@ import it.mahd.taxi.util.SocketIO;
 public class BookNow extends Fragment implements LocationListener {
     SharedPreferences pref;
     Controllers conf = new Controllers();
+    ServerRequest sr = new ServerRequest();
     Socket socket = SocketIO.getInstance();
     ArrayList<TaxiPosition> listTaxi = new ArrayList<>();
 
-    //MarkerOptions marker = new MarkerOptions();
     MapView mMapView;
     Service service;
+    private static Dialog bookDialog;
     private GoogleMap googleMap;
     protected LocationManager locationManager;// Declaring a Location Manager
     Location location; // location
@@ -81,7 +96,7 @@ public class BookNow extends Fragment implements LocationListener {
         View v = inflater.inflate(R.layout.booknow, container, false);
         pref = getActivity().getSharedPreferences(conf.app, Context.MODE_PRIVATE);
         socket.connect();
-        socket.on(conf.tag_gps, handleIncomingMessages);//listen in taxi driver
+        socket.on(conf.io_gps, handleIncomingMessages);//listen in taxi driver
 
         mMapView = (MapView) v.findViewById(R.id.mapView);
         mMapView.onCreate(savedInstanceState);
@@ -105,11 +120,65 @@ public class BookNow extends Fragment implements LocationListener {
             latitude = 0;
             longitude = 0;
         }
-        /*MarkerOptions marker = new MarkerOptions().position(new LatLng(latitude, longitude)).title("Hello Maps");// create marker
-        marker.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_ROSE));// Changing marker icon
-        googleMap.addMarker(marker);// adding marker*/
         cameraPosition = new CameraPosition.Builder().target(new LatLng(latitude, longitude)).zoom(15).build();
         googleMap.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition));
+        googleMap.setOnMarkerClickListener(new GoogleMap.OnMarkerClickListener() {
+            public boolean onMarkerClick(Marker arg0) {
+                bookDialog = new Dialog(getActivity(), R.style.FullHeightDialog);
+                bookDialog.setContentView(R.layout.booknow_dialog);
+                bookDialog.setCancelable(true);
+                ImageView Picture_iv, Color_iv;
+                TextView Username_txt, Age_txt, Model_txt, Serial_txt, Places_txt, Luggages_txt;
+                Button Book_btn, Cancel_btn;
+                Picture_iv = (ImageView) bookDialog.findViewById(R.id.picture_iv);
+                Username_txt = (TextView) bookDialog.findViewById(R.id.username_txt);
+                Age_txt = (TextView) bookDialog.findViewById(R.id.age_txt);
+                Color_iv = (ImageView) bookDialog.findViewById(R.id.color_iv);
+                Model_txt = (TextView) bookDialog.findViewById(R.id.model_txt);
+                Serial_txt = (TextView) bookDialog.findViewById(R.id.serial_txt);
+                Places_txt = (TextView) bookDialog.findViewById(R.id.places_txt);
+                Luggages_txt = (TextView) bookDialog.findViewById(R.id.luggages_txt);
+                Book_btn = (Button) bookDialog.findViewById(R.id.book_btn);
+                Cancel_btn = (Button) bookDialog.findViewById(R.id.cancel_btn);
+                List<NameValuePair> params = new ArrayList<NameValuePair>();
+                params.add(new BasicNameValuePair(conf.tag_token, arg0.getTitle()));
+                JSONObject json = sr.getJSON(conf.url_getDriver, params);
+                if(json != null){
+                    try{
+                        if(json.getBoolean(conf.res)) {
+                            Encrypt algo = new Encrypt();
+                            int keyVirtual = Integer.parseInt(json.getString(conf.tag_key));
+                            String newKey = algo.key(keyVirtual);
+                            byte[] imageAsBytes = Base64.decode(json.getString(conf.tag_picture).getBytes(), Base64.DEFAULT);
+                            Picture_iv.setImageBitmap(BitmapFactory.decodeByteArray(imageAsBytes, 0, imageAsBytes.length));
+                            String color = algo.enc2dec(json.getString(conf.tag_color), newKey);
+                            Username_txt.setTextColor(Color.parseColor(color));
+                            Username_txt.setText(algo.enc2dec(json.getString(conf.tag_fname), newKey)
+                                    + " " + algo.enc2dec(json.getString(conf.tag_lname), newKey));
+                            int[] tab = new Calculator().getAge(algo.enc2dec(json.getString(conf.tag_dateN), newKey));
+                            Age_txt.setTextColor(Color.parseColor(color));
+                            Age_txt.setText(tab[0] + "years, " + tab[1] + "month, " + tab[2] + "day");
+                            Color_iv.setBackgroundColor(Color.parseColor(color));
+                            Model_txt.setTextColor(Color.parseColor(color));
+                            Model_txt.setText(algo.enc2dec(json.getString(conf.tag_model), newKey));
+                            Serial_txt.setTextColor(Color.parseColor(color));
+                            Serial_txt.setText(algo.enc2dec(json.getString(conf.tag_serial), newKey));
+                            Places_txt.setTextColor(Color.parseColor(color));
+                            Places_txt.setText(algo.enc2dec(json.getString(conf.tag_places), newKey) + " Places,");
+                            Luggages_txt.setTextColor(Color.parseColor(color));
+                            Luggages_txt.setText(algo.enc2dec(json.getString(conf.tag_luggages), newKey) + " Kg Luggages");
+                        }
+                    }catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+                } else {
+                    Toast.makeText(getActivity(), R.string.serverunvalid, Toast.LENGTH_SHORT).show();
+                }
+                bookDialog.show();
+
+                return true;
+            }
+        });
         return v;
     }
 
@@ -130,6 +199,7 @@ public class BookNow extends Fragment implements LocationListener {
                         if (working) {
                             if (listTaxi.isEmpty()) {
                                 MarkerOptions a = new MarkerOptions().position(new LatLng(lat, lon))
+                                        .title(token)
                                         .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_RED));
                                 Marker m = googleMap.addMarker(a);
                                 TaxiPosition t = new TaxiPosition(token, socket, lat, lon, m);
@@ -152,6 +222,7 @@ public class BookNow extends Fragment implements LocationListener {
                                     listTaxi.get(position).setLongitude(lon);
                                 } else {
                                     MarkerOptions a = new MarkerOptions().position(new LatLng(lat, lon))
+                                            .title(token)
                                             .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_RED));
                                     Marker m = googleMap.addMarker(a);
                                     TaxiPosition t = new TaxiPosition(token, socket, lat, lon, m);
@@ -159,9 +230,7 @@ public class BookNow extends Fragment implements LocationListener {
                                 }
                             }
                         } else {
-                            Toast.makeText(getActivity(),"not working",Toast.LENGTH_SHORT).show();
                             if (!listTaxi.isEmpty()) {
-                                Toast.makeText(getActivity(),"not empty list",Toast.LENGTH_SHORT).show();
                                 for (int i = 0; i < listTaxi.size(); i++) {
                                     if (socket.equals(listTaxi.get(i).getSocket())) {
                                         listTaxi.get(i).getMarker().remove();
@@ -284,7 +353,7 @@ public class BookNow extends Fragment implements LocationListener {
                 json.put(conf.tag_latitude,latitude);
                 json.put(conf.tag_longitude, longitude);
                 json.put(conf.tag_token, pref.getString(conf.tag_token, ""));
-                socket.emit(conf.tag_gps, json);
+                socket.emit(conf.io_gps, json);
             }catch(JSONException e){ }
         }
     }

@@ -9,7 +9,7 @@ import android.net.NetworkInfo;
  */
 public class Controllers {
     //public static final String url = "http://10.0.2.2:4004";
-    public static final String url = "http://192.168.1.3:4004";
+    public static final String url = "http://192.168.1.2:4004";
     public static final String url_addReclamation = url + "/addReclamation";
     public static final String url_getAllReclamation = url + "/getAllReclamation";
     public static final String url_addMessage = url + "/addMessage";
@@ -21,6 +21,7 @@ public class Controllers {
     public static final String url_getAllCountry = url + "/getAllCountry";
     public static final String url_getAllCity = url + "/getAllCity";
     public static final String url_signup = url + "/signup";
+    public static final String url_getDriver = url + "/getDriver";
 
     public static final String app = "AppTaxi";
     public static final String res = "res";
@@ -57,9 +58,17 @@ public class Controllers {
     public static final String tag_sat = "sat";
     public static final String tag_sun = "sun";
     public static final String tag_description = "description";
-    public static final String tag_gps = "gps";
     public static final String tag_socket = "socket";
     public static final String tag_working = "working";
+    public static final String tag_refresh = "refresh";
+    public static final String tag_model = "model";
+    public static final String tag_serial = "serial";
+    public static final String tag_places = "places";
+    public static final String tag_luggages = "luggages";
+    public static final String tag_color = "color";
+
+    public static final String io_gps = "gps";
+    public static final String io_reclamation = "reclamation";
 
     public Controllers() {}
 
