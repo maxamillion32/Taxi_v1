@@ -30,6 +30,8 @@ public class Controllers {
     public static final String tag_key = "key";
     public static final String tag_id = "_id";
     public static final String tag_token = "token";
+    public static final String tag_tokenDriver = "tokenDriver";
+    public static final String tag_tokenClient = "tokenClient";
     public static final String tag_username = "username";
     public static final String tag_name = "name";
     public static final String tag_fname = "fname";
@@ -66,9 +68,19 @@ public class Controllers {
     public static final String tag_places = "places";
     public static final String tag_luggages = "luggages";
     public static final String tag_color = "color";
+    public static final String tag_originLatitude = "originLatitude";
+    public static final String tag_originLongitude = "originLongitude";
+    public static final String tag_desLatitude = "desLatitude";
+    public static final String tag_desLongitude = "desLongitude";
+    public static final String tag_validRoute = "validRoute";
 
     public static final String io_gps = "gps";
     public static final String io_reclamation = "reclamation";
+    public static final String io_preBook = "preBook";
+    public static final String io_validBook = "validBook";
+    public static final String io_postBook = "postBook";
+    public static final String io_drawRoute = "drawRoute";
+    public static final String io_validRoute = "validRoute";
 
     public Controllers() {}
 
