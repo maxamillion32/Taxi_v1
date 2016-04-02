@@ -25,6 +25,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.ListView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -45,6 +46,7 @@ import com.google.android.gms.maps.model.PolylineOptions;
 
 import org.apache.http.NameValuePair;
 import org.apache.http.message.BasicNameValuePair;
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -60,6 +62,10 @@ import java.util.List;
 
 import it.mahd.taxi.Main;
 import it.mahd.taxi.R;
+import it.mahd.taxi.database.ReclamationAdapterList;
+import it.mahd.taxi.database.ReclamationDB;
+import it.mahd.taxi.database.ServiceAdapterList;
+import it.mahd.taxi.database.ServicesDB;
 import it.mahd.taxi.database.TaxiPosition;
 import it.mahd.taxi.util.Calculator;
 import it.mahd.taxi.util.Controllers;
@@ -78,10 +84,11 @@ public class BookNow extends Fragment implements LocationListener {
     Socket socket = SocketIO.getInstance();
     ArrayList<TaxiPosition> listTaxi = new ArrayList<>();
     ArrayList<TaxiPosition> driverTaxi = new ArrayList<>();
+    private ServiceAdapterList adapter;
 
     MapView mMapView;
     Service service;
-    private static Dialog bookDialog;
+    private static Dialog bookDialog, validDialog;
     private GoogleMap googleMap;
     protected LocationManager locationManager;// Declaring a Location Manager
     Location location; // location
@@ -97,6 +104,7 @@ public class BookNow extends Fragment implements LocationListener {
     private Boolean ioPostBook = false;
     private String tokenOfDriver;
     private String usernameOfDriver;
+    private String idBook;
     private LatLng ptOfDriver;
     private static final long MIN_DISTANCE_CHANGE_FOR_UPDATES = 3;// The minimum distance to change Updates in meters // 3 meters
     private static final long MIN_TIME_BW_UPDATES = 1000 * 3 * 1;// The minimum time between updates in milliseconds // 3 seconds
@@ -121,6 +129,7 @@ public class BookNow extends Fragment implements LocationListener {
         socket.on(conf.io_validBook, handleIncomingValidBook);//listen in driver valid book
         socket.on(conf.io_postBook, handleIncomingPostBook);
         socket.on(conf.io_drawRoute, handleIncomingDrawRoute);
+        socket.on(conf.io_endCourse, handleIncomingEndCourse);
 
         DistanceDuration_txt = (TextView) v.findViewById(R.id.distance_time_txt);
         mMapView = (MapView) v.findViewById(R.id.mapView);
@@ -244,6 +253,99 @@ public class BookNow extends Fragment implements LocationListener {
         });
         return v;
     }
+
+    private Emitter.Listener handleIncomingEndCourse = new Emitter.Listener(){
+        public void call(final Object... args){
+            getActivity().runOnUiThread(new Runnable() {
+                public void run() {
+                    JSONObject data = (JSONObject) args[0];
+                    Double pcourse, ptake, preturn;
+                    String token;
+                    try {
+                        idBook = data.getString(conf.tag_id);
+                        pcourse = data.getDouble(conf.tag_pcourse);
+                        ptake = data.getDouble(conf.tag_ptake);
+                        preturn = data.getDouble(conf.tag_preturn);
+                        token = data.getString(conf.tag_token);
+                        if (token.equals(tokenOfDriver)) {
+                            googleMap.clear();
+                            //Toast.makeText(getActivity(),"x:" + pcourse + " " + ptake,Toast.LENGTH_LONG).show();
+                            validDialog = new Dialog(getActivity(), R.style.FullHeightDialog);
+                            validDialog.setContentView(R.layout.booknow_dialog_valid);
+                            validDialog.setCancelable(true);
+                            TextView PriceCourse_txt, PriceTake_txt, PriceReturn_txt;
+                            ListView Services_lv;
+                            Button Valid_btn, Cancel_btn;
+                            PriceCourse_txt = (TextView) validDialog.findViewById(R.id.priceCourse_txt);
+                            PriceCourse_txt.setText("pcourse: " + pcourse);
+                            PriceTake_txt = (TextView) validDialog.findViewById(R.id.priceTake_txt);
+                            PriceTake_txt.setText("ptake: " + ptake);
+                            PriceReturn_txt = (TextView) validDialog.findViewById(R.id.priceReturn_txt);
+                            PriceReturn_txt.setText("preturn: " + preturn);
+                            Services_lv = (ListView) validDialog.findViewById(R.id.services_lv);
+                            Cancel_btn = (Button) validDialog.findViewById(R.id.cancel_btn);
+                            Cancel_btn.setOnClickListener(new View.OnClickListener() {
+                                public void onClick(View v) {
+                                    googleMap.clear();
+                                    validDialog.dismiss();
+                                }
+                            });
+                            Valid_btn = (Button) validDialog.findViewById(R.id.valid_btn);
+                            Valid_btn.setOnClickListener(new View.OnClickListener() {
+                                public void onClick(View v) {
+                                    validDialog.dismiss();
+                                    int x = adapter.getNote();
+                                    List<NameValuePair> params = new ArrayList<NameValuePair>();
+                                    params.add(new BasicNameValuePair(conf.tag_id, idBook));
+                                    params.add(new BasicNameValuePair(conf.tag_value, x + ""));
+                                    JSONObject json = sr.getJSON(conf.url_addNote, params);
+                                    if(json != null){
+                                        try{
+                                            String jsonstr = json.getString(conf.response);
+                                            Toast.makeText(getActivity(), jsonstr, Toast.LENGTH_LONG).show();
+                                            if(json.getBoolean(conf.res)){
+                                                FragmentTransaction ft = getFragmentManager().beginTransaction();
+                                                ft.replace(R.id.container_body, new Home());
+                                                ft.commit();
+                                                ((Main) getActivity()).getSupportActionBar().setTitle(getString(R.string.home));
+                                            }
+                                        }catch(JSONException e){
+                                            e.printStackTrace();
+                                        }
+                                    }else{
+                                        Toast.makeText(getActivity(),R.string.serverunvalid,Toast.LENGTH_LONG).show();
+                                    }
+                                }
+                            });
+                            validDialog.show();
+                            ArrayList<ServicesDB> servicesDBList = new ArrayList<>();
+                            List<NameValuePair> params = new ArrayList<NameValuePair>();
+                            JSONObject json = sr.getJSON(conf.url_getAllService, params);
+                            if(json != null){
+                                try{
+                                    if(json.getBoolean(conf.res)) {
+                                        JSONArray loads = json.getJSONArray("data");
+                                        for (int i = 0; i < loads.length(); i++) {
+                                            JSONObject c = loads.getJSONObject(i);
+                                            String id = c.getString(conf.tag_id);
+                                            String name = c.getString(conf.tag_name);
+                                            int value = c.getInt(conf.tag_value);
+                                            ServicesDB rec = new ServicesDB(id, name, value);
+                                            servicesDBList.add(rec);
+                                        }
+                                    }
+                                } catch (JSONException e) {
+                                    e.printStackTrace();
+                                }
+                            }
+                            adapter = new ServiceAdapterList(getActivity(), servicesDBList, BookNow.this);
+                            Services_lv.setAdapter(adapter);
+                        }
+                    } catch (JSONException e) { }
+                }
+            });
+        }
+    };
 
     private Emitter.Listener handleIncomingDrawRoute = new Emitter.Listener(){
         public void call(final Object... args){

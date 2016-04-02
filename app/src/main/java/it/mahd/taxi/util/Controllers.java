@@ -9,7 +9,7 @@ import android.net.NetworkInfo;
  */
 public class Controllers {
     //public static final String url = "http://10.0.2.2:4004";
-    public static final String url = "http://192.168.1.2:4004";
+    public static final String url = "http://192.168.1.8:4004";
     public static final String url_addReclamation = url + "/addReclamation";
     public static final String url_getAllReclamation = url + "/getAllReclamation";
     public static final String url_addMessage = url + "/addMessage";
@@ -22,6 +22,8 @@ public class Controllers {
     public static final String url_getAllCity = url + "/getAllCity";
     public static final String url_signup = url + "/signup";
     public static final String url_getDriver = url + "/getDriver";
+    public static final String url_getAllService = url + "/getAllService";
+    public static final String url_addNote = url + "/addNote";
 
     public static final String app = "AppTaxi";
     public static final String res = "res";
@@ -73,6 +75,10 @@ public class Controllers {
     public static final String tag_desLatitude = "desLatitude";
     public static final String tag_desLongitude = "desLongitude";
     public static final String tag_validRoute = "validRoute";
+    public static final String tag_pcourse = "pcourse";
+    public static final String tag_ptake = "ptake";
+    public static final String tag_preturn = "preturn";
+    public static final String tag_value = "value";
 
     public static final String io_gps = "gps";
     public static final String io_reclamation = "reclamation";
@@ -81,6 +87,7 @@ public class Controllers {
     public static final String io_postBook = "postBook";
     public static final String io_drawRoute = "drawRoute";
     public static final String io_validRoute = "validRoute";
+    public static final String io_endCourse = "endCourse";
 
     public Controllers() {}
 
