@@ -76,7 +76,15 @@ public class ServiceAdapterList extends BaseAdapter {
         return v;
     }
 
-    public int getNote() { return note; }
+    public int getNote() { return (note / getTotalNote()) * 20; }
+
+    public int getTotalNote() {
+        int total = 0;
+        for (int i = 0; i<getCount(); i++){
+            total += data.get(i).getValue();
+        }
+        return total;
+    }
 
     class ServiceHolder {
         CheckBox Name_cbx;

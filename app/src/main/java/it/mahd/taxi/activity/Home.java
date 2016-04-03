@@ -3,29 +3,18 @@ package it.mahd.taxi.activity;
 import android.app.Activity;
 import android.content.Context;
 import android.content.SharedPreferences;
-import android.graphics.BitmapFactory;
-import android.graphics.drawable.BitmapDrawable;
-import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
-import android.support.v7.widget.Toolbar;
-import android.util.Base64;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.Toast;
 
-import com.github.nkzawa.socketio.client.IO;
-import com.github.nkzawa.socketio.client.Socket;
-
-import java.net.URISyntaxException;
-
 import it.mahd.taxi.Main;
 import it.mahd.taxi.R;
 import it.mahd.taxi.database.Notify;
-import it.mahd.taxi.model.FragmentDrawer;
 import it.mahd.taxi.util.Controllers;
 
 /**
@@ -34,9 +23,6 @@ import it.mahd.taxi.util.Controllers;
 public class Home extends Fragment {
     SharedPreferences pref;
     Controllers conf = new Controllers();
-
-    private Toolbar mToolbar;
-    private FragmentDrawer drawerFragment;
 
     public Home() {}
 
@@ -50,21 +36,14 @@ public class Home extends Fragment {
         View rootView = inflater.inflate(R.layout.home, container, false);
         pref = getActivity().getSharedPreferences(conf.app, Context.MODE_PRIVATE);
 
-        Boolean x = new Notify().reclamationNotify(Home.this);
-        if (x) {
-            Toast.makeText(getActivity(), "true", Toast.LENGTH_SHORT).show();
-        }
+        //socket
+        //new Notify().reclamationNotify(Home.this);
+
         Button Now_btn = (Button) rootView.findViewById(R.id.btn_now);
         Now_btn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                //return commantre annd delete this
-                FragmentTransaction ft = getFragmentManager().beginTransaction();
-                ft.replace(R.id.container_body, new BookNow());
-                ft.addToBackStack(null);
-                ft.commit();
-                ((Main) getActivity()).getSupportActionBar().setTitle(getString(R.string.now));
-                /*if (pref.getString(Tag_token, "").equals("")){
+                if (pref.getString(conf.tag_token, "").equals("")){
                     FragmentTransaction ft = getFragmentManager().beginTransaction();
                     ft.replace(R.id.container_body, new Login());
                     ft.addToBackStack(null);
@@ -76,7 +55,7 @@ public class Home extends Fragment {
                     ft.addToBackStack(null);
                     ft.commit();
                     ((Main) getActivity()).getSupportActionBar().setTitle(getString(R.string.now));
-                }*/
+                }
             }
         });
 
@@ -84,7 +63,7 @@ public class Home extends Fragment {
         Advance_btn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                /*if (pref.getString(conf.tag_token, "").equals("")){
+                if (pref.getString(conf.tag_token, "").equals("")){
                     FragmentTransaction ft = getFragmentManager().beginTransaction();
                     ft.replace(R.id.container_body, new Login());
                     ft.commit();
@@ -100,17 +79,7 @@ public class Home extends Fragment {
                     ft.addToBackStack(null);
                     ft.commit();
                     ((Main) getActivity()).getSupportActionBar().setTitle(getString(R.string.advance));
-                }*/
-                Fragment fr = new BookAdvance();
-                FragmentTransaction ft = getFragmentManager().beginTransaction();
-                Bundle args = new Bundle();
-                args.putDouble(conf.tag_latitude, 0);
-                args.putDouble(conf.tag_longitude, 0);
-                fr.setArguments(args);
-                ft.replace(R.id.container_body, fr);
-                ft.addToBackStack(null);
-                ft.commit();
-                ((Main) getActivity()).getSupportActionBar().setTitle(getString(R.string.advance));
+                }
             }
         });
 
@@ -134,11 +103,6 @@ public class Home extends Fragment {
         });
 
         Button Profile_btn = (Button) rootView.findViewById(R.id.btn_profile);
-        /*if (!pref.getString(conf.tag_token, "").equals("")){
-            byte[] imageAsBytes = Base64.decode(pref.getString(conf.tag_picture, "").getBytes(), Base64.DEFAULT);
-            BitmapDrawable bitmap = new BitmapDrawable(BitmapFactory.decodeByteArray(imageAsBytes, 0, imageAsBytes.length));
-            Profile_btn.setCompoundDrawablesWithIntrinsicBounds(null, bitmap, null, null);
-        }*/
         Profile_btn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

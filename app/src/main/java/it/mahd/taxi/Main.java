@@ -22,8 +22,6 @@ import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
-import com.github.nkzawa.socketio.client.Socket;
-
 import it.mahd.taxi.activity.BookAdvance;
 import it.mahd.taxi.activity.BookNow;
 import it.mahd.taxi.activity.Home;
@@ -31,15 +29,11 @@ import it.mahd.taxi.activity.Login;
 import it.mahd.taxi.activity.Profile;
 import it.mahd.taxi.activity.Reclamation;
 import it.mahd.taxi.activity.Settings;
-import it.mahd.taxi.database.Notify;
 import it.mahd.taxi.model.FragmentDrawer;
 import it.mahd.taxi.util.Controllers;
-import it.mahd.taxi.util.ServerRequest;
-import it.mahd.taxi.util.SocketIO;
 
 public class Main extends AppCompatActivity implements FragmentDrawer.FragmentDrawerListener {
     SharedPreferences pref;
-    ServerRequest sr = new ServerRequest();
     Controllers conf = new Controllers();
 
     public Toolbar mToolbar;

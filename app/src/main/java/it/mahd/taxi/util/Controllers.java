@@ -9,7 +9,7 @@ import android.net.NetworkInfo;
  */
 public class Controllers {
     //public static final String url = "http://10.0.2.2:4004";
-    public static final String url = "http://192.168.1.8:4004";
+    public static final String url = "http://192.168.1.3:4004";
     public static final String url_addReclamation = url + "/addReclamation";
     public static final String url_getAllReclamation = url + "/getAllReclamation";
     public static final String url_addMessage = url + "/addMessage";
@@ -46,6 +46,8 @@ public class Controllers {
     public static final String tag_country = "country";
     public static final String tag_city = "city";
     public static final String tag_phone = "phone";
+    public static final String tag_pt = "pt";
+    public static final String tag_ptt = "ptt";
     public static final String tag_subject = "subject";
     public static final String tag_message = "message";
     public static final String tag_date = "date";
@@ -80,7 +82,7 @@ public class Controllers {
     public static final String tag_preturn = "preturn";
     public static final String tag_value = "value";
 
-    public static final String io_gps = "gps";
+    public static final String io_searchTaxi = "searchTaxi";
     public static final String io_reclamation = "reclamation";
     public static final String io_preBook = "preBook";
     public static final String io_validBook = "validBook";
