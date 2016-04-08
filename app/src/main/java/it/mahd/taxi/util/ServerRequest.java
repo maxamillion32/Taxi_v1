@@ -87,7 +87,7 @@ public class ServerRequest {
         return jobj;
     }
 
-    private static class Params{
+    private static class Params {
         String url;
         List<NameValuePair> params;
         Params(String url, List<NameValuePair> params) {

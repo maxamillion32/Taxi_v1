@@ -68,8 +68,8 @@ public class Main extends AppCompatActivity implements FragmentDrawer.FragmentDr
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.menu, menu);
-        MenuItem menuItem = menu.findItem(R.id.action_notify);
-        menuItem.setIcon(buildCounterDrawable(5, R.mipmap.ic_notify));
+        /*MenuItem menuItem = menu.findItem(R.id.action_notify);
+        menuItem.setIcon(buildCounterDrawable(5, R.mipmap.ic_notify));*/
         return true;
     }
 

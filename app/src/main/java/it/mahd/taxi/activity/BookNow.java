@@ -104,6 +104,7 @@ public class BookNow extends Fragment implements LocationListener {
     private Boolean ioPreBook = false;
     private Boolean ioValid = false;
     private Boolean ioPostBook = false;
+    private Boolean ioEndCourse = false;
     private String tokenOfDriver;
     private String usernameOfDriver;
     private String idBook;
@@ -127,8 +128,8 @@ public class BookNow extends Fragment implements LocationListener {
         pref = getActivity().getSharedPreferences(conf.app, Context.MODE_PRIVATE);
         socket.connect();
         ioPreBook = true;
-        //isStart = false;
-        ioValid = false; ioPostBook = false;
+        ioValid = false; ioPostBook = false; ioEndCourse = false;
+        tokenOfDriver = "";
         socket.on(conf.io_searchTaxi, handleIncomingPreBook);//listen in taxi driver
         socket.on(conf.io_validBook, handleIncomingValidBook);//listen in driver valid book
         socket.on(conf.io_postBook, handleIncomingPostBook);
@@ -169,6 +170,7 @@ public class BookNow extends Fragment implements LocationListener {
                     jsonx.put(conf.tag_validRoute, true);
                     jsonx.put(conf.tag_tokenClient, pref.getString(conf.tag_token, ""));
                     socket.emit(conf.io_validRoute, jsonx);
+                    ioEndCourse = true;
                     Valid_btn.setVisibility(View.GONE);
                 }catch(JSONException e){ }
             }
@@ -328,6 +330,7 @@ public class BookNow extends Fragment implements LocationListener {
                         }
                     }
                 }
+                bookDialog.show();
                 Cancel_btn.setOnClickListener(new View.OnClickListener() {
                     public void onClick(View v) {
                         bookDialog.dismiss();
@@ -336,22 +339,22 @@ public class BookNow extends Fragment implements LocationListener {
                 Book_btn.setOnClickListener(new View.OnClickListener() {
                     public void onClick(View v) {
                         ioValid = true;
-                        ioPreBook = false; ioPostBook = false;
+                        ioPreBook = false;
+                        ioPostBook = false;
                         JSONObject jsonx = new JSONObject();
-                        try{
-                            jsonx.put(conf.tag_latitude,latitude);
+                        try {
+                            jsonx.put(conf.tag_latitude, latitude);
                             jsonx.put(conf.tag_longitude, longitude);
                             jsonx.put(conf.tag_tokenDriver, tokenOfDriver);
                             jsonx.put(conf.tag_tokenClient, pref.getString(conf.tag_token, ""));
                             jsonx.put(conf.tag_fname, pref.getString(conf.tag_fname, "") + " " + pref.getString(conf.tag_lname, ""));
                             socket.emit(conf.io_preBook, jsonx);
-                        }catch(JSONException e){ }
+                        } catch (JSONException e) {
+                        }
                         bookDialog.dismiss();
                         googleMap.clear();
                     }
                 });
-                bookDialog.show();
-
                 return true;
             }
         });
@@ -362,94 +365,96 @@ public class BookNow extends Fragment implements LocationListener {
         public void call(final Object... args){
             getActivity().runOnUiThread(new Runnable() {
                 public void run() {
-                    ioPreBook = false; ioValid = false; ioPostBook = false;
-                    JSONObject data = (JSONObject) args[0];
-                    Double pcourse, ptake, preturn;
-                    String token;
-                    try {
-                        idBook = data.getString(conf.tag_id);
-                        pcourse = data.getDouble(conf.tag_pcourse);
-                        ptake = data.getDouble(conf.tag_ptake);
-                        preturn = data.getDouble(conf.tag_preturn);
-                        token = data.getString(conf.tag_token);
-                        if (token.equals(tokenOfDriver)) {
-                            googleMap.clear();
-                            //Toast.makeText(getActivity(),"x:" + pcourse + " " + ptake,Toast.LENGTH_LONG).show();
-                            validDialog = new Dialog(getActivity(), R.style.FullHeightDialog);
-                            validDialog.setContentView(R.layout.booknow_dialog_valid);
-                            validDialog.setCancelable(true);
-                            TextView PriceCourse_txt, PriceTake_txt, PriceReturn_txt;
-                            ListView Services_lv;
-                            Button Valid_btn, Cancel_btn;
-                            PriceCourse_txt = (TextView) validDialog.findViewById(R.id.priceCourse_txt);
-                            PriceCourse_txt.setText("pcourse: " + pcourse);
-                            PriceTake_txt = (TextView) validDialog.findViewById(R.id.priceTake_txt);
-                            PriceTake_txt.setText("ptake: " + ptake);
-                            PriceReturn_txt = (TextView) validDialog.findViewById(R.id.priceReturn_txt);
-                            PriceReturn_txt.setText("preturn: " + preturn);
-                            Services_lv = (ListView) validDialog.findViewById(R.id.services_lv);
-                            Cancel_btn = (Button) validDialog.findViewById(R.id.cancel_btn);
-                            Cancel_btn.setOnClickListener(new View.OnClickListener() {
-                                public void onClick(View v) {
-                                    googleMap.clear();
-                                    ioPreBook = true;
-                                    ioValid = false; ioPostBook = false;
-                                    validDialog.dismiss();
-                                }
-                            });
-                            Valid_btn = (Button) validDialog.findViewById(R.id.valid_btn);
-                            Valid_btn.setOnClickListener(new View.OnClickListener() {
-                                public void onClick(View v) {
-                                    validDialog.dismiss();
-                                    int x = adapter.getNote();
-                                    List<NameValuePair> params = new ArrayList<NameValuePair>();
-                                    params.add(new BasicNameValuePair(conf.tag_id, idBook));
-                                    params.add(new BasicNameValuePair(conf.tag_tokenDriver, tokenOfDriver));
-                                    params.add(new BasicNameValuePair(conf.tag_value, x + ""));
-                                    JSONObject json = sr.getJSON(conf.url_addNote, params);
-                                    if(json != null){
-                                        try{
-                                            String jsonstr = json.getString(conf.response);
-                                            Toast.makeText(getActivity(), jsonstr, Toast.LENGTH_LONG).show();
-                                            if(json.getBoolean(conf.res)){
-                                                FragmentTransaction ft = getFragmentManager().beginTransaction();
-                                                ft.replace(R.id.container_body, new Home());
-                                                ft.commit();
-                                                ((Main) getActivity()).getSupportActionBar().setTitle(getString(R.string.home));
+                    if (ioEndCourse) {
+                        ioPreBook = false; ioValid = false; ioPostBook = false;
+                        JSONObject data = (JSONObject) args[0];
+                        Double pcourse, ptake, preturn;
+                        String token;
+                        try {
+                            idBook = data.getString(conf.tag_id);
+                            pcourse = data.getDouble(conf.tag_pcourse);
+                            ptake = data.getDouble(conf.tag_ptake);
+                            preturn = data.getDouble(conf.tag_preturn);
+                            token = data.getString(conf.tag_token);
+                            if (token.equals(tokenOfDriver)) {
+                                googleMap.clear();
+                                //Toast.makeText(getActivity(),"x:" + pcourse + " " + ptake,Toast.LENGTH_LONG).show();
+                                validDialog = new Dialog(getActivity(), R.style.FullHeightDialog);
+                                validDialog.setContentView(R.layout.booknow_dialog_valid);
+                                validDialog.setCancelable(true);
+                                TextView PriceCourse_txt, PriceTake_txt, PriceReturn_txt;
+                                ListView Services_lv;
+                                Button Valid_btn, Cancel_btn;
+                                PriceCourse_txt = (TextView) validDialog.findViewById(R.id.priceCourse_txt);
+                                PriceCourse_txt.setText("pcourse: " + pcourse);
+                                PriceTake_txt = (TextView) validDialog.findViewById(R.id.priceTake_txt);
+                                PriceTake_txt.setText("ptake: " + ptake);
+                                PriceReturn_txt = (TextView) validDialog.findViewById(R.id.priceReturn_txt);
+                                PriceReturn_txt.setText("preturn: " + preturn);
+                                Services_lv = (ListView) validDialog.findViewById(R.id.services_lv);
+                                Cancel_btn = (Button) validDialog.findViewById(R.id.cancel_btn);
+                                Cancel_btn.setOnClickListener(new View.OnClickListener() {
+                                    public void onClick(View v) {
+                                        googleMap.clear();
+                                        ioPreBook = true;
+                                        ioValid = false; ioPostBook = false;
+                                        validDialog.dismiss();
+                                    }
+                                });
+                                Valid_btn = (Button) validDialog.findViewById(R.id.valid_btn);
+                                Valid_btn.setOnClickListener(new View.OnClickListener() {
+                                    public void onClick(View v) {
+                                        validDialog.dismiss();
+                                        int x = adapter.getNote();
+                                        List<NameValuePair> params = new ArrayList<NameValuePair>();
+                                        params.add(new BasicNameValuePair(conf.tag_id, idBook));
+                                        params.add(new BasicNameValuePair(conf.tag_tokenDriver, tokenOfDriver));
+                                        params.add(new BasicNameValuePair(conf.tag_value, x + ""));
+                                        JSONObject json = sr.getJSON(conf.url_addNote, params);
+                                        if(json != null){
+                                            try{
+                                                String jsonstr = json.getString(conf.response);
+                                                Toast.makeText(getActivity(), jsonstr, Toast.LENGTH_LONG).show();
+                                                if(json.getBoolean(conf.res)){
+                                                    FragmentTransaction ft = getFragmentManager().beginTransaction();
+                                                    ft.replace(R.id.container_body, new Home());
+                                                    ft.commit();
+                                                    ((Main) getActivity()).getSupportActionBar().setTitle(getString(R.string.home));
+                                                }
+                                            }catch(JSONException e){
+                                                e.printStackTrace();
                                             }
-                                        }catch(JSONException e){
-                                            e.printStackTrace();
-                                        }
-                                    }else{
-                                        Toast.makeText(getActivity(),R.string.serverunvalid,Toast.LENGTH_LONG).show();
-                                    }
-                                }
-                            });
-                            validDialog.show();
-                            ArrayList<ServicesDB> servicesDBList = new ArrayList<>();
-                            List<NameValuePair> params = new ArrayList<NameValuePair>();
-                            JSONObject json = sr.getJSON(conf.url_getAllService, params);
-                            if(json != null){
-                                try{
-                                    if(json.getBoolean(conf.res)) {
-                                        JSONArray loads = json.getJSONArray("data");
-                                        for (int i = 0; i < loads.length(); i++) {
-                                            JSONObject c = loads.getJSONObject(i);
-                                            String id = c.getString(conf.tag_id);
-                                            String name = c.getString(conf.tag_name);
-                                            int value = c.getInt(conf.tag_value);
-                                            ServicesDB rec = new ServicesDB(id, name, value);
-                                            servicesDBList.add(rec);
+                                        }else{
+                                            Toast.makeText(getActivity(),R.string.serverunvalid,Toast.LENGTH_LONG).show();
                                         }
                                     }
-                                } catch (JSONException e) {
-                                    e.printStackTrace();
+                                });
+                                validDialog.show();
+                                ArrayList<ServicesDB> servicesDBList = new ArrayList<>();
+                                List<NameValuePair> params = new ArrayList<NameValuePair>();
+                                JSONObject json = sr.getJSON(conf.url_getAllService, params);
+                                if(json != null){
+                                    try{
+                                        if(json.getBoolean(conf.res)) {
+                                            JSONArray loads = json.getJSONArray("data");
+                                            for (int i = 0; i < loads.length(); i++) {
+                                                JSONObject c = loads.getJSONObject(i);
+                                                String id = c.getString(conf.tag_id);
+                                                String name = c.getString(conf.tag_name);
+                                                int value = c.getInt(conf.tag_value);
+                                                ServicesDB rec = new ServicesDB(id, name, value);
+                                                servicesDBList.add(rec);
+                                            }
+                                        }
+                                    } catch (JSONException e) {
+                                        e.printStackTrace();
+                                    }
                                 }
+                                adapter = new ServiceAdapterList(getActivity(), servicesDBList, BookNow.this);
+                                Services_lv.setAdapter(adapter);
                             }
-                            adapter = new ServiceAdapterList(getActivity(), servicesDBList, BookNow.this);
-                            Services_lv.setAdapter(adapter);
-                        }
-                    } catch (JSONException e) { }
+                        } catch (JSONException e) { }
+                    }
                 }
             });
         }
@@ -472,6 +477,7 @@ public class BookNow extends Fragment implements LocationListener {
                             token = data.getString(conf.tag_token);
                             if (token.equals(tokenOfDriver)) {
                                 googleMap.clear();
+                                ioEndCourse = true;
                                 Valid_btn.setVisibility(View.VISIBLE);
                                 MarkerOptions options = new MarkerOptions();
                                 LatLng origin = new LatLng(origLat,origLon);
@@ -515,7 +521,13 @@ public class BookNow extends Fragment implements LocationListener {
                                     TaxiPosition t = new TaxiPosition(token, "", lat, lon, m);
                                     driverTaxi.add(t);
                                 } else {
-                                    driverTaxi.get(0).getMarker().setPosition(new LatLng(lat, lon));
+                                    for (int i = 0; i < driverTaxi.size(); i++) {
+                                        if (token.equals(driverTaxi.get(i).getToken())) {
+                                            driverTaxi.get(i).getMarker().setPosition(new LatLng(lat, lon));
+                                            break;
+                                        }
+                                    }
+
                                 }
                             }
                         } catch (JSONException e) { }

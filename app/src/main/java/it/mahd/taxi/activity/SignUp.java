@@ -74,16 +74,6 @@ public class SignUp extends Fragment {
 
     public SignUp() {}
 
-    private boolean NetworkIsAvailable() {
-        ConnectivityManager manager = (ConnectivityManager) getActivity().getSystemService(Context.CONNECTIVITY_SERVICE);
-        NetworkInfo networkInfo = manager.getActiveNetworkInfo();
-        boolean isAvailable = false;
-        if(networkInfo != null && networkInfo.isConnected()) {
-            isAvailable = true;
-        }
-        return isAvailable;
-    }
-
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -132,7 +122,7 @@ public class SignUp extends Fragment {
         JSONObject json = sr.getJSON(conf.url_getAllCountry, countryParams);
         if(json != null){
             try{
-                if(json.getBoolean("res")){
+                if(json.getBoolean(conf.res)){
                     countrys = json.getJSONArray("data");
                     for (int i=0; i<countrys.length(); i++) {
                         JSONObject c = countrys.getJSONObject(i);
@@ -184,7 +174,7 @@ public class SignUp extends Fragment {
                 JSONObject jsonx = sr.getJSON(conf.url_getAllCity, cityParams);
                 if (jsonx != null) {
                     try {
-                        if (jsonx.getBoolean("res")) {
+                        if (jsonx.getBoolean(conf.res)) {
                             citys = jsonx.getJSONArray("data");
                             for (int i = 0; i < citys.length(); i++) {
                                 JSONObject x = citys.getJSONObject(i);
